@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "less": "^4.2.0"
+  },
+  "scripts": {
+    "css": "lessc ./styles/styles.less ./styles/main.css",
+    "start": "python3 -m http.server"
+  }
+}

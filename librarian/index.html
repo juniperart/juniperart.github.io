@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Librarian | Books OUUC</title>
+    <link rel="shortcut icon" href="#">
+    <link rel="icon" type="image/png" href="favicon.ico">
+</head>
+<style>
+.main {
+    width:90%;
+    margin: auto;
+    max-width: 600px;
+}
+
+#book-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    float: left;
+}
+
+label {
+    margin-bottom: 5px;
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+p {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+/* .output .input-group {
+    display: flex;
+    align-items: center;
+  } */
+
+button.output {
+    margin-bottom: 20px;
+}
+
+ /* .output input[type="text"] {
+    flex: 1;
+    margin-right: 0.5rem;
+  } */
+
+input[type="text"],
+textarea {
+    padding: 9px 8px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: none;
+    background-color: #4c92c2;
+    color: #fff;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2d6d98;
+}
+
+.check {
+    color: #039318;
+    font-family: sans-serif;
+    display: inline-block;
+    display: none;
+    margin-left: 12px;
+}
+
+.check img {
+    width: 14px;
+    margin-right: 3px;
+}
+
+hr {
+    margin: 0px 0 12px 0;
+    height: 1px;
+    background: #676767;
+    clear: both;
+}
+
+#links {
+    float: right;
+    display: none;
+}
+
+#photos img {
+    display: block;
+    margin: auto;
+    max-width: 90%;
+    margin-bottom: 15px;
+}
+
+#photos span {
+    margin-bottom: 5px;
+    display: block;
+}
+
+#checkbox-container {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.checkbox-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start; /* Align checkboxes to the left of the label */
+  flex: 1; /* Distribute columns evenly */
+  line-height: 5px;
+  margin-top: 9px;
+}
+
+.checkbox-label {
+  margin-left: 10px;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  left: 16px;
+  top: -12px;
+}
+
+#copyPreviousModal {
+    width: 50%;
+    overflow: hidden;
+    border: 1px solid black;
+    padding: 20px;
+    position: absolute;
+    background: white;
+    z-index: 999;
+    left: 25%;
+    top: 60px;
+    display: none;
+}
+
+.row {
+    margin-bottom: 14px;
+}
+
+.row:last-of-type {
+    margin-bottom: 0;
+}
+
+#copyPreviousModal p {
+    display: inline;
+}
+
+.previousButton {
+    display: inline;
+    margin-right: 20px;
+}
+
+#closeButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: none;
+    background: none;
+    color: black;
+    font-weight: 500;
+    font-size: 20px;
+}
+
+
+</style>
+<body>
+    <div id="copyPreviousModal">
+        <button type="button" id="closeButton" onClick="closeModal()">X</button>
+        <div id="modalContent"></div>
+    </div>
+    <div class="main">
+        <div class="isbn-group">
+            <h2>Librarian</h2>
+            <form id="isbn-form">
+                <label for="isbn-input">ISBN:</label>
+                <input type="text" id="isbn-input" name="isbn">
+                <button type="submit">Lookup</button>
+                <button type="button" onClick="clearAndFocus()">X</button>
+            </form>
+            <br>
+            
+            <div class="form-group output">
+                <div class="input-group">
+                    <input type="text" id="output" name="author">
+                    <button id="output" class="output" onclick="generate(true)" type="submit">Generate</button>
+                    <button id="previousButton" onclick="copyPrevious()" title="Copy Previous">
+                        Previous
+                    </button>
+                    <div class="check"><img src="check.png">Copied</div>
+                </div>
+            </div>
+            <div id="links"></div>
+        </div>
+        <hr>
+        <form id="book-form">
+            <div class="form-group">
+            <label for="title-input">Title:</label>
+            <input type="text" id="title-input" name="title">
+            </div>
+            <div class="form-group">
+            <label for="author-input">Author:</label>
+            <input type="text" id="author-input" name="author">
+            </div>
+            <div class="form-group">
+            <label for="description-input">Description:</label>
+            <textarea id="description-input" name="description" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+            <label for="keywords-input">Key Words:</label>
+            <!-- <input type="text" id="keywords-input" name="keywords"> -->
+            <div id="checkbox-container"></div>
+            </div>
+        </form>
+        <hr>
+        <div id="photos"></div>
+    </div>
+    <script src="librarian.js"></script>
+</body>
+</html>

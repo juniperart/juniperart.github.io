@@ -1,0 +1,460 @@
+/*
+ * The Typekit service used to deliver this font or fonts for use on websites
+ * is provided by Adobe and is subject to these Terms of Use
+ * http://www.adobe.com/products/eulas/tou_typekit. For font license
+ * information, see the list below.
+ *
+ * myriad-pro:
+ *   - http://typekit.com/eulas/0000000000000000000170a0
+ *   - http://typekit.com/eulas/0000000000000000000170a1
+ *   - http://typekit.com/eulas/00000000000000000001709e
+ *   - http://typekit.com/eulas/00000000000000000001709f
+ *   - http://typekit.com/eulas/00000000000000000001709b
+ *   - http://typekit.com/eulas/000000000000000000017098
+ *   - http://typekit.com/eulas/000000000000000000017099
+ *   - http://typekit.com/eulas/00000000000000000001709a
+ *   - http://typekit.com/eulas/00000000000000000001709c
+ *   - http://typekit.com/eulas/00000000000000000001709d
+ *
+ * © 2009-2024 Adobe Systems Incorporated. All Rights Reserved.
+ */
+/*{"last_published":"2024-05-09 05:30:59 UTC"}*/
+@import url("https://p.typekit.net/p.css?s=1&k=jal5yik&ht=tk&f=6844.6845.6846.6847.6848.6849.6850.6851.6852.6853&a=72621407&app=typekit&e=css");
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/95c20a/0000000000000000000170a0/27/l?subset_id=2&fvd=n9&v=3") format("woff2"), url("https://use.typekit.net/af/95c20a/0000000000000000000170a0/27/d?subset_id=2&fvd=n9&v=3") format("woff"), url("https://use.typekit.net/af/95c20a/0000000000000000000170a0/27/a?subset_id=2&fvd=n9&v=3") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 900;
+  font-stretch: normal;
+}
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/fd10fc/0000000000000000000170a1/27/l?subset_id=2&fvd=i9&v=3") format("woff2"), url("https://use.typekit.net/af/fd10fc/0000000000000000000170a1/27/d?subset_id=2&fvd=i9&v=3") format("woff"), url("https://use.typekit.net/af/fd10fc/0000000000000000000170a1/27/a?subset_id=2&fvd=i9&v=3") format("opentype");
+  font-display: auto;
+  font-style: italic;
+  font-weight: 900;
+  font-stretch: normal;
+}
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/1b1b1e/00000000000000000001709e/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"), url("https://use.typekit.net/af/1b1b1e/00000000000000000001709e/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"), url("https://use.typekit.net/af/1b1b1e/00000000000000000001709e/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 700;
+  font-stretch: normal;
+}
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/2e2357/00000000000000000001709f/27/l?subset_id=2&fvd=i7&v=3") format("woff2"), url("https://use.typekit.net/af/2e2357/00000000000000000001709f/27/d?subset_id=2&fvd=i7&v=3") format("woff"), url("https://use.typekit.net/af/2e2357/00000000000000000001709f/27/a?subset_id=2&fvd=i7&v=3") format("opentype");
+  font-display: auto;
+  font-style: italic;
+  font-weight: 700;
+  font-stretch: normal;
+}
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/d32e26/00000000000000000001709b/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3") format("woff2"), url("https://use.typekit.net/af/d32e26/00000000000000000001709b/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3") format("woff"), url("https://use.typekit.net/af/d32e26/00000000000000000001709b/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i4&v=3") format("opentype");
+  font-display: auto;
+  font-style: italic;
+  font-weight: 400;
+  font-stretch: normal;
+}
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/c630c3/000000000000000000017098/27/l?subset_id=2&fvd=n3&v=3") format("woff2"), url("https://use.typekit.net/af/c630c3/000000000000000000017098/27/d?subset_id=2&fvd=n3&v=3") format("woff"), url("https://use.typekit.net/af/c630c3/000000000000000000017098/27/a?subset_id=2&fvd=n3&v=3") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 300;
+  font-stretch: normal;
+}
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/ee605b/000000000000000000017099/27/l?subset_id=2&fvd=i3&v=3") format("woff2"), url("https://use.typekit.net/af/ee605b/000000000000000000017099/27/d?subset_id=2&fvd=i3&v=3") format("woff"), url("https://use.typekit.net/af/ee605b/000000000000000000017099/27/a?subset_id=2&fvd=i3&v=3") format("opentype");
+  font-display: auto;
+  font-style: italic;
+  font-weight: 300;
+  font-stretch: normal;
+}
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/cafa63/00000000000000000001709a/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"), url("https://use.typekit.net/af/cafa63/00000000000000000001709a/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"), url("https://use.typekit.net/af/cafa63/00000000000000000001709a/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 400;
+  font-stretch: normal;
+}
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/80c5d0/00000000000000000001709c/27/l?subset_id=2&fvd=n6&v=3") format("woff2"), url("https://use.typekit.net/af/80c5d0/00000000000000000001709c/27/d?subset_id=2&fvd=n6&v=3") format("woff"), url("https://use.typekit.net/af/80c5d0/00000000000000000001709c/27/a?subset_id=2&fvd=n6&v=3") format("opentype");
+  font-display: auto;
+  font-style: normal;
+  font-weight: 600;
+  font-stretch: normal;
+}
+@font-face {
+  font-family: "myriad-pro";
+  src: url("https://use.typekit.net/af/d50a1b/00000000000000000001709d/27/l?subset_id=2&fvd=i6&v=3") format("woff2"), url("https://use.typekit.net/af/d50a1b/00000000000000000001709d/27/d?subset_id=2&fvd=i6&v=3") format("woff"), url("https://use.typekit.net/af/d50a1b/00000000000000000001709d/27/a?subset_id=2&fvd=i6&v=3") format("opentype");
+  font-display: auto;
+  font-style: italic;
+  font-weight: 600;
+  font-stretch: normal;
+}
+.tk-myriad-pro {
+  font-family: "myriad-pro", sans-serif;
+}
+body {
+  font-family: "Arial", sans-serif;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: "myriad-pro", "Arial", sans-serif;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 20px;
+}
+p {
+  font-size: 18px;
+}
+.italic {
+  font-style: italic;
+}
+.grey {
+  color: #5a5a5a;
+}
+.hide {
+  display: none !important;
+}
+p a {
+  color: #000;
+  text-decoration: none;
+  border-bottom: 1px solid black;
+  padding-bottom: 1px;
+}
+nav {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  font-family: "myriad-pro", "Arial", sans-serif;
+  font-size: 18px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 15px auto 60px;
+  position: inherit;
+  margin-bottom: 30px;
+}
+nav > div {
+  display: flex;
+  max-width: 33.33%;
+  justify-content: space-evenly;
+}
+nav .nav-item a {
+  text-decoration: none;
+  color: #000000;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #ffffff;
+}
+nav .nav-item.active a,
+nav .nav-item:hover a {
+  border-bottom: 1px solid #000000;
+}
+nav .logo-desktop {
+  display: flex;
+}
+nav .logo-desktop img {
+  width: 100%;
+}
+@media screen and (max-width: 800px) {
+  nav .logo-desktop {
+    display: none;
+  }
+}
+.logo-mobile {
+  display: none;
+}
+@media screen and (max-width: 800px) {
+  .logo-mobile {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .logo-mobile img {
+    width: 100%;
+    max-width: 400px;
+  }
+}
+@media screen and (max-width: 600px) {
+  .logo-mobile img {
+    width: 90%;
+    max-width: 90%;
+    padding: 5%;
+  }
+}
+main {
+  width: 100%;
+  max-width: 800px;
+  margin: auto;
+}
+#home .home-container {
+  padding: 0 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#home .home-container:nth-child(even) {
+  flex-direction: row-reverse;
+}
+#home .home-container .home-container-image {
+  width: 50%;
+}
+#home .home-container .home-container-text {
+  padding: 20px;
+  width: 50%;
+}
+@media screen and (max-width: 800px) {
+  #home .home-container {
+    flex-direction: column !important;
+    padding: 0 20px;
+  }
+  #home .home-container .home-container-image {
+    width: 80%;
+  }
+  #home .home-container .home-container-text {
+    padding: 20px;
+    width: 80%;
+  }
+}
+@media screen and (max-width: 600px) {
+  #home .home-container {
+    display: block;
+  }
+  #home .home-container .home-container-image {
+    width: 100%;
+  }
+  #home .home-container .home-container-text {
+    width: 100%;
+    padding: 20px 0;
+  }
+}
+#watercolor main {
+  max-width: 1400px;
+}
+#watercolor h2 {
+  display: none;
+}
+#watercolor h3 {
+  font-size: 26px;
+}
+#watercolor a {
+  color: black;
+  text-decoration: none;
+}
+#watercolor .gallery-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  position: relative;
+  cursor: pointer;
+  padding-top: 45px;
+}
+#watercolor .gallery-container .gallerySwitch {
+  position: absolute;
+  top: 0;
+  display: flex;
+  cursor: pointer;
+}
+#watercolor .gallery-container .gallerySwitch div {
+  border: 1px solid black;
+  padding: 4px;
+  background: #ffffff;
+}
+#watercolor .gallery-container .gallerySwitch div:first-child {
+  border-right: 0;
+  background-color: #cbcbcb;
+}
+#watercolor .gallery-container.cp .gallerySwitch div {
+  background-color: #cbcbcb;
+}
+#watercolor .gallery-container.cp .gallerySwitch div:first-child {
+  background: #ffffff;
+}
+#watercolor .gallery-container .gallery-image {
+  width: 31%;
+  margin-bottom: 4%;
+  overflow: hidden;
+  position: relative;
+}
+@media screen and (max-width: 1200px) {
+  #watercolor .gallery-container .gallery-image {
+    width: 48%;
+  }
+}
+@media screen and (max-width: 600px) {
+  #watercolor .gallery-container .gallery-image {
+    width: 100%;
+  }
+}
+#watercolor .gallery-container .gallery-image img {
+  width: 100%;
+  display: block;
+}
+#watercolor .gallery-container .gallery-image .gallery-overlay {
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.3s;
+  opacity: 0;
+  background-color: #5a5a5a;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#watercolor .gallery-container .gallery-image .gallery-overlay:hover {
+  transform: opacity(1);
+  opacity: 0.7;
+}
+#watercolor .gallery-container .gallery-image .gallery-overlay h4 {
+  color: white;
+  text-align: center;
+  font-size: 30px;
+  margin-top: 44%;
+}
+#watercolor .gallery-container.cp .gallery-overlay:hover {
+  transform: auto;
+  opacity: 0;
+}
+#watercolor .lightbox-container {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #5a5a5a;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#watercolor .lightbox-container .watercolor-container {
+  z-index: 4;
+  pointer-events: none;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+}
+@media screen and (max-width: 800px) {
+  #watercolor .lightbox-container .watercolor-container {
+    flex-direction: column;
+  }
+}
+#watercolor .lightbox-container .watercolor-container h2 {
+  text-align: center;
+}
+#watercolor .lightbox-container .watercolor-container .image-main-container {
+  pointer-events: all;
+  cursor: pointer;
+  width: 80%;
+  max-width: 700px;
+  max-height: 100%;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+}
+@media screen and (max-width: 800px) {
+  #watercolor .lightbox-container .watercolor-container .image-main-container {
+    height: 80%;
+    padding: 15px 0;
+    width: 100%;
+  }
+}
+#watercolor .lightbox-container .watercolor-container .image-main-container img {
+  max-width: 100%;
+  max-height: inherit;
+  margin: auto;
+}
+#watercolor .lightbox-container .thumbnails-container {
+  z-index: 5;
+  pointer-events: none;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 20%;
+}
+@media screen and (max-width: 800px) {
+  #watercolor .lightbox-container .thumbnails-container {
+    width: 100%;
+    flex-direction: row;
+    height: 15%;
+    padding-bottom: 20px;
+    flex-wrap: nowrap;
+  }
+}
+#watercolor .lightbox-container .thumbnails-container .thumbnail-image {
+  align-items: center;
+  margin: 20px 15px;
+  max-width: 100px;
+  max-height: 100px;
+  cursor: pointer;
+  pointer-events: all;
+  display: flex;
+  justify-content: center;
+}
+@media screen and (max-width: 800px) {
+  #watercolor .lightbox-container .thumbnails-container .thumbnail-image {
+    width: 70px;
+    margin: 0 2%;
+  }
+}
+#watercolor .lightbox-container .thumbnails-container .thumbnail-image img {
+  max-width: 100%;
+  max-height: 100%;
+  border: 2px solid #5a5a5a;
+}
+#watercolor .lightbox-container .thumbnails-container .thumbnail-image img:hover,
+#watercolor .lightbox-container .thumbnails-container .thumbnail-image img.active {
+  border: 2px solid white;
+}
+#watercolor .lightbox-container .lightbox-close {
+  z-index: 9;
+  display: flex;
+  top: 8px;
+  position: fixed;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+  padding-bottom: 50px;
+  width: calc(100vw - 36px);
+  justify-content: flex-end;
+}
+#watercolor .lightbox-container .exit-overlay {
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+#watercolor .lightbox-container.model-showcase {
+  background: none;
+  position: relative;
+}
+#watercolor .lightbox-container.model-showcase .lightbox-close {
+  display: none;
+}
+#watercolor .lightbox-container.model-showcase .thumbnail-image img {
+  border: 2px solid #ffffff;
+}
+#watercolor .lightbox-container.model-showcase .thumbnail-image img:hover,
+#watercolor .lightbox-container.model-showcase .thumbnail-image img.active {
+  border: 2px solid black;
+}
