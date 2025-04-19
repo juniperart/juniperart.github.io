@@ -167,34 +167,18 @@ nav .nav-item.active a,
 nav .nav-item:hover a {
   border-bottom: 1px solid #000000;
 }
-nav .logo-desktop {
+.logo {
   display: flex;
-}
-nav .logo-desktop img {
   width: 100%;
+  justify-content: center;
+  margin-bottom: 20px;
 }
-@media screen and (max-width: 800px) {
-  nav .logo-desktop {
-    display: none;
-  }
-}
-.logo-mobile {
-  display: none;
-}
-@media screen and (max-width: 800px) {
-  .logo-mobile {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  .logo-mobile img {
-    width: 100%;
-    max-width: 400px;
-  }
+.logo img {
+  width: 100%;
+  max-width: 400px;
 }
 @media screen and (max-width: 600px) {
-  .logo-mobile img {
+  img {
     width: 90%;
     max-width: 90%;
     padding: 5%;

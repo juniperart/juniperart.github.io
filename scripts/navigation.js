@@ -3,38 +3,35 @@
 const page = document.querySelector('body').id
 
 const links = [
-    'watercolor',
+    { 
+        text: 'Origami',
+        href: 'https://juniperorigami.com'
+    },
+    {
+        text: 'Watercolor'
+    }
 ]
 
 const navigation = document.querySelector('nav')
-const mobileLogo = document.querySelector('.logo-mobile')
-
-const logo = `
-    <div class="logo-desktop">
-        <a href="/">
-            <img src="/julie-juniper.png">
-        </a>
-    </div>
-`
+const logo = document.querySelector('.logo')
 
 let navHTML = ''
 
 links.forEach((x, i) => {
+    const path = x.text.charAt(0).toLowerCase() + x.text.slice(1)
+    const href = x.href ? x.href : `/${path}`
     navHTML += `
         <div class="nav-item${x === page ? ' active' : ''}">
-            <a href="/${x}">
-                <span>${x.charAt(0).toUpperCase() + x.slice(1)}</span>
+            <a href="${href}">
+                <span>${x.text}</span>
             </a>
         </div>
     `
-    if (i === 1) {
-        navHTML += logo
-    }
 })
 
 navigation.innerHTML = navHTML
 
-mobileLogo.innerHTML = `
+logo.innerHTML = `
     <a href="/">
         <img src="/julie-juniper.png">
     </a>
