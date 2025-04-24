@@ -1,0 +1,171 @@
+* {
+    box-sizing: border-box;
+}
+
+#legend {
+    width: 50px;
+    float: left;
+}
+
+#legend div {
+    width: 50px;
+    height: 50px;
+    border: 3px solid lightgray;
+    margin-bottom: 10px;
+}
+
+#legend div.light.last {
+    margin-bottom: 30px;
+}
+
+#board {
+    border: 2px solid black;
+    height: 95vh;
+    width: 95vh;
+    float: left;
+    margin-right: 30px;
+}
+
+#pallette {
+    float: left;
+    height: 100%;
+    width: 240px;
+}
+
+#pallette .swatch-row {
+    width: 100%;
+    height: 20px;
+    display: flex;
+    pointer-events: all;
+}
+
+#pallette .swatch-row div {
+    width: 15%;
+    height: 100%;
+    pointer-events: none;
+}
+
+#pallette .swatch-row div.swatchLabel {
+    width: 40%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.row {
+    width: 100%;
+    display: flex;
+}
+
+.cell {
+    border: .1px solid black;
+    height: 100%;
+}
+
+.cell span {
+    background: #fff;
+    opacity: .4;
+    padding: 2px;
+    position: absolute;
+}
+
+.preview {
+    pointer-events: none;
+    width: 40%;
+    height: 40%;
+    margin: auto;
+    margin-top: 30%;
+    background-color: azure;
+}
+
+#togglePreviewButton div {
+    width: 50%;
+    height: 50%;
+    margin: 25%;
+    background-color: rgb(95, 95, 95);
+    pointer-events: none;
+    border: 0;
+}
+
+#legend .toggle-button {
+    border: 2px solid #111111;
+}
+
+#toggleLabelButton {
+    color: #111111;
+}
+
+#toggleLabelButton span {
+    font-size: 23px;
+    position: relative;
+    top: 2px;
+    left: 7px;
+}
+
+.hideLabel #toggleLabelButton {
+    color: #cacaca;
+    border: 2px solid #cacaca
+}
+
+.hidePreview #togglePreviewButton {
+    color: #cacaca;
+    border: 2px solid #cacaca
+}
+
+.hideLabel .cell span {
+    display: none;
+}
+
+.hidePreview .preview {
+    display: none;
+}
+
+.hidePreview #togglePreviewButton div {
+    background-color: white;
+    border: 2px dashed #cacaca;
+}
+
+.hideLabel .cell span {
+    display: none;
+}
+
+.hideBorder .cell {
+    border: none;
+}
+
+#legend #toggleBorderButton {
+    border: 2px solid #111111
+}
+
+#toggleBorderButton hr {
+    margin: 0;
+    background: #111111;
+    height: 2px;
+    border: 0;
+    position: relative;
+}
+
+#toggleBorderButton hr:first-of-type {
+    top: calc(50% - 1px);
+}
+
+#toggleBorderButton hr:last-of-type {
+    transform: rotate(90deg);
+    top: 20px;
+}
+
+.hideBorder #legend #toggleBorderButton {
+    border: 2px solid #cacaca
+}
+
+.hideBorder #toggleBorderButton hr {
+    background: transparent;
+    border-bottom: 2px dashed #cacaca;
+}
+
+#clearButton span {
+    display: block;
+    width: 13px;
+    margin: auto;
+    height: 100%;
+    line-height: 46px;
+}

@@ -9,7 +9,13 @@ const links = [
     },
     {
         text: 'Watercolor'
-    }
+    },
+    {
+        text: 'Swatches'
+    },
+    {
+        text: 'Librarian'
+    },
 ]
 
 const navigation = document.querySelector('nav')
