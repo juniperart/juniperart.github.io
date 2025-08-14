@@ -215,7 +215,7 @@ function formatBookInfo(googleBookData, isbn) {
     let bookData = {
         title: formattedTitle,
         author: formatAuthorNames(googleBookData.authors),
-        description: `${extractYear(googleBookData.publishedDate)} - ${googleBookData.description}`,
+        description: `${extractYear(googleBookData.publishedDate)} - ${googleBookData.description}\nFrom recent Amazon/GoodReads reviews: ""; ""; ""`,
         isbn: isbn
     }
     return bookData;
