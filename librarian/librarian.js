@@ -41,7 +41,10 @@ function formatAuthorNames(authors) {
         let firstName = authorParts[0];
         let lastName = authorParts[authorParts.length - 1];
         let middleNames = authorParts.slice(1, authorParts.length - 1).join(' ');
-        formattedAuthors = `${lastName}, ${firstName} ${middleNames}`;
+        formattedAuthors = `${lastName}, ${firstName}` 
+        if (middleNames) {
+            formattedAuthors += ` ${middleNames}`;
+        }
     }
 
     // Add the second author, and 'et al.'
