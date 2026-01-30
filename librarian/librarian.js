@@ -309,7 +309,7 @@ document.getElementById("isbn-form").addEventListener("submit", async function (
             <p><a href=https://www.ebay.com/sh/research?marketplace=EBAY-US&keywords=${isbn}&dayRange=90&endDate=1680216616964&startDate=1672444216964&categoryId=0&offset=0&limit=50&tabName=SOLD&tz=America%2FLos_Angeles" target="_blank">Ebay</a>
         `;
         } catch (error) {
-            alert('ISBN not recognized.')
+            alert(`ISBN not recognized.\n\n${error?.message || error}`);
         }
     } else {
         alert('Please enter a book ISBN.')
