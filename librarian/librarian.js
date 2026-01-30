@@ -258,7 +258,7 @@ async function getGoogleImageSearchResult(isbn) {
     var numberOfResults = 4;
 
     // API credentials
-    var apikey = "AIzaSyAeCBGyZIj2L5YG_bISvAqW86jR3TNKQMo";
+    var apikey = "AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE";
     var searchEngineID = "511ac3198aa8e497a";
 
     // Building call to API
