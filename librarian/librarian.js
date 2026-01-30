@@ -14,6 +14,7 @@ let modalContent
 let copiedText
 let generateArray = []
 let isbn = ''
+var apikey = "AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE";
 
 // defines objects
 function defineObjects() {
@@ -40,7 +41,7 @@ function formatAuthorNames(authors) {
         let authorParts = authors[0].split(' ');
         let firstName = authorParts[0];
         let lastName = authorParts[authorParts.length - 1];
-        let middleNames = authorParts.slice(1, authorParts.length - 1).join(' ');
+        let middleNames = authorParts?.slice(1, authorParts.length - 1).join(' ');
         formattedAuthors = `${lastName}, ${firstName}` 
         if (middleNames) {
             formattedAuthors += ` ${middleNames}`;
@@ -143,7 +144,7 @@ function clearAndFocus() {
     setCopied(false);
     isbn = ''
 
-    checkboxes.forEach(x => {
+    checkboxes?.forEach(x => {
         x.checked = false
     })
 }
@@ -231,12 +232,12 @@ async function getImages(isbn) {
 
 function addImages(hrefs) {
     photos.innerHTML = ''
-    hrefs.forEach(x => {
+    hrefs?.forEach(x => {
         photos.innerHTML += `<img src="${x}" />`
     })
     setTimeout(() => {
         const images = Array.from(document.querySelectorAll('#photos img'))
-        images.forEach(x => {
+        images?.forEach(x => {
             let info = document.createElement('span')
             info.textContent = `${x.naturalWidth}x${x.naturalHeight}`;
             photos.insertBefore(info, x)
@@ -246,19 +247,29 @@ function addImages(hrefs) {
 
 // Define a function to fetch book information from an API using ISBN
 async function fetchBookInfo(isbn) {
-    const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
-    const data = await response.json();
-    getImages(isbn)
-    let googleBookData = data.items[0].volumeInfo;
-    setCopied(false);
-    return formatBookInfo(googleBookData, isbn);
+  const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${apikey}`);
+
+  const text = await response.text();           // read body ONCE
+  const data = text ? JSON.parse(text) : null;  // parse if present
+
+  if (!response.ok) {
+    throw new Error(data?.error?.message || `Google Books error ${response.status}`);
+  }
+
+  if (!data?.items?.length) {
+    throw new Error('No data returned for ISBN');
+  }
+
+  await getImages(isbn);
+  setCopied(false);
+
+  return formatBookInfo(data.items[0].volumeInfo, isbn);
 }
 
 async function getGoogleImageSearchResult(isbn) {
     var numberOfResults = 4;
 
     // API credentials
-    var apikey = "AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE";
     var searchEngineID = "511ac3198aa8e497a";
 
     // Building call to API
@@ -267,11 +278,11 @@ async function getGoogleImageSearchResult(isbn) {
 
     const response = await fetch(url);
     const data = await response.json();
-    const urls = data.items.map(x => {
+    const urls = data?.items?.map(x => {
         if (x.link && x.link.includes('.jpg')) return `${x.link.split('.jpg')[0]}.jpg`
     }).filter(x => x)
 
-    return urls.slice(0, numberOfResults);
+    return urls?.slice(0, numberOfResults);
 }
 
 function copyPrevious() {
@@ -309,7 +320,7 @@ document.getElementById("isbn-form").addEventListener("submit", async function (
             <p><a href=https://www.ebay.com/sh/research?marketplace=EBAY-US&keywords=${isbn}&dayRange=90&endDate=1680216616964&startDate=1672444216964&categoryId=0&offset=0&limit=50&tabName=SOLD&tz=America%2FLos_Angeles" target="_blank">Ebay</a>
         `;
         } catch (error) {
-            alert(`ISBN not recognized.\n\n${error?.message || error}`);
+            alert(error.toString());
         }
     } else {
         alert('Please enter a book ISBN.')
