@@ -247,6 +247,7 @@ function addImages(hrefs) {
 
 // Define a function to fetch book information from an API using ISBN
 async function fetchBookInfo(isbn) {
+  await getImages(isbn);
   const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${apikey}`);
 
   const text = await response.text();           // read body ONCE
@@ -260,7 +261,6 @@ async function fetchBookInfo(isbn) {
     throw new Error('No data returned for ISBN');
   }
 
-  await getImages(isbn);
   setCopied(false);
 
   return formatBookInfo(data.items[0].volumeInfo, isbn);
