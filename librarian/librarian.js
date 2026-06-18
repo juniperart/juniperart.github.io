@@ -1,4 +1,6 @@
 let isbnInput
+let formatSelect
+let conditionSelect
 let titleInput
 let authorInput
 let descriptionInput
@@ -19,6 +21,8 @@ var apikey = "AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE";
 // defines objects
 function defineObjects() {
     isbnInput = document.getElementById("isbn-input")
+    formatSelect = document.getElementById("format-select")
+    conditionSelect = document.getElementById("condition-select")
     titleInput = document.getElementById("title-input")
     authorInput = document.getElementById("author-input")
     descriptionInput = document.getElementById("description-input")
@@ -135,6 +139,8 @@ function clearAndFocus() {
     isbnInput.value = "";
     isbnInput.focus();
 
+    formatSelect.value = '';
+    conditionSelect.value = '';
     titleInput.value = '';
     authorInput.value = '';
     descriptionInput.value = '';
@@ -154,19 +160,17 @@ const checkboxValues = [
     "LGBTQ",
     "True-Crime",
 
-    "Gift-Worthy",
+    "Graphic-Novel",
     "L-P",
     "UU",
 
-    "Graphic-Novel",
+    "Holiday",
     "PNW",
     "Women",
 
-    "Holiday",
+    "Justice",
     "Signed",
     "World-Language",
-    
-    "Justice",
 ];
 
 console.log(checkboxValues)
@@ -219,7 +223,7 @@ function formatBookInfo(googleBookData, isbn) {
     let bookData = {
         title: formattedTitle,
         author: formatAuthorNames(googleBookData.authors),
-        description: `${extractYear(googleBookData.publishedDate)} - ${googleBookData.description}\nFrom recent Amazon/GoodReads reviews: ""; ""; ""`,
+        description: `${extractYear(googleBookData.publishedDate)} ${formatSelect.value} ${conditionSelect.value.toLowerCase()}.${googleBookData.description ? ' ' + googleBookData.description : ''}\nFrom recent Amazon/GoodReads reviews: ""; ""; ""`,
         isbn: isbn
     }
     return bookData;
@@ -307,6 +311,11 @@ document.getElementById("isbn-form").addEventListener("submit", async function (
     event.preventDefault();
     isbn = isbnInput.value;
 
+    if (!formatSelect.value || !conditionSelect.value) {
+        alert('Please select a format and condition before looking up.');
+        return;
+    }
+
     if (isbn.length >= 10) {
         try {
             const bookData = await fetchBookInfo(isbn);
@@ -344,4 +353,7 @@ window.addEventListener("load", function () {
     document.getElementById("isbn-input").focus();
     defineObjects()
     renderCheckboxes()
+    isbnInput.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") event.preventDefault();
+    });
 });
