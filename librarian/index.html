@@ -51,7 +51,8 @@ button.output {
   } */
 
 input[type="text"],
-textarea {
+textarea,
+select {
     padding: 9px 8px;
     font-size: 16px;
     border-radius: 4px;
@@ -133,6 +134,19 @@ hr {
   top: -12px;
 }
 
+#isbn-form {
+    overflow: hidden;
+}
+
+.isbn-buttons {
+    float: right;
+    margin-top: 10px;
+}
+
+.isbn-buttons button {
+    margin-left: 8px;
+}
+
 #copyPreviousModal {
     width: 50%;
     overflow: hidden;
@@ -186,9 +200,27 @@ hr {
             <h2>Librarian</h2>
             <form id="isbn-form">
                 <label for="isbn-input">ISBN:</label>
-                <input type="text" id="isbn-input" name="isbn">
-                <button type="submit">Lookup</button>
-                <button type="button" onClick="clearAndFocus()">X</button>
+                <input type="text" id="isbn-input" name="isbn" value="">
+                <select id="format-select">
+                    <option value="">Format...</option>
+                    <option>HCDJ</option>
+                    <option>HC</option>
+                    <option>PB</option>
+                    <option>French-Flap PB</option>
+                    <option>MMPB</option>
+                    <option>Spiral-Bound</option>
+                </select>
+                <select id="condition-select">
+                    <option value="">Condition...</option>
+                    <option>in Gift-Worthy condition</option>
+                    <option>in nice clean condition</option>
+                    <option>with minor wear</option>
+                    <option>with wear</option>
+                </select>
+                <div class="isbn-buttons">
+                    <button type="submit">Lookup</button>
+                    <button type="button" onClick="clearAndFocus()">X</button>
+                </div>
             </form>
             <br>
             
