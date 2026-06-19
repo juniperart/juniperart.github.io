@@ -99,7 +99,9 @@ function copyToClipboard(outputText, index) {
 
 function generate(generate) {
     if (!titleInput.value && generate) {
-        alert('Please enter a book title.')
+        alert('Please enter a title.')
+    } else if (!authorInput.value && generate) {
+        alert('Please enter an author.')
     } else if (titleInput.value) {
         let title = titleInput.value
         let cleanDescription = descriptionInput.value
@@ -217,13 +219,26 @@ function getCheckedValues() {
     return checkedValues.join(',');
 }
 
+function buildDescriptor(year) {
+    const parts = year ? [year] : [];
+    if (formatSelect.value) parts.push(formatSelect.value);
+    if (conditionSelect.value) parts.push(conditionSelect.value.toLowerCase());
+    if (!formatSelect.value && !conditionSelect.value) return null;
+    return parts.join(' ') + '.';
+}
+
 function formatBookInfo(googleBookData, isbn) {
     const subtitle = googleBookData.subtitle ? `: ${googleBookData.subtitle}` : '';
     const formattedTitle = `${googleBookData.title}${subtitle}`
     let bookData = {
         title: formattedTitle,
         author: formatAuthorNames(googleBookData.authors),
-        description: `${extractYear(googleBookData.publishedDate)} ${formatSelect.value} ${conditionSelect.value.toLowerCase()}.${googleBookData.description ? ' ' + googleBookData.description : ''}\nFrom recent Amazon/GoodReads reviews: ""; ""; ""`,
+        description: (() => {
+            const descriptor = buildDescriptor(extractYear(googleBookData.publishedDate));
+            const bookDesc = googleBookData.description || '';
+            const mainLine = descriptor ? `${descriptor}${bookDesc ? ' ' + bookDesc : ''}` : bookDesc;
+            return `${mainLine}\nFrom recent Amazon/GoodReads reviews: ""; ""; ""`;
+        })(),
         isbn: isbn
     }
     return bookData;
@@ -311,8 +326,12 @@ document.getElementById("isbn-form").addEventListener("submit", async function (
     event.preventDefault();
     isbn = isbnInput.value;
 
-    if (!formatSelect.value || !conditionSelect.value) {
-        alert('Please select a format and condition before looking up.');
+
+    if (!isbn.length) {
+        const descriptor = buildDescriptor(null);
+        const firstLine = descriptor ? `${descriptor}\n` : '';
+        document.getElementById("description-input").value =
+            `${firstLine}From recent Amazon/GoodReads reviews: ""; ""; ""`;
         return;
     }
 
@@ -331,8 +350,6 @@ document.getElementById("isbn-form").addEventListener("submit", async function (
         } catch (error) {
             alert(error.toString());
         }
-    } else {
-        alert('Please enter a book ISBN.')
     }
 });
 
@@ -353,7 +370,4 @@ window.addEventListener("load", function () {
     document.getElementById("isbn-input").focus();
     defineObjects()
     renderCheckboxes()
-    isbnInput.addEventListener("keydown", function (event) {
-        if (event.key === "Enter") event.preventDefault();
-    });
 });
