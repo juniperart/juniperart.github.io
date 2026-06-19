@@ -223,7 +223,7 @@ function buildDescriptor(year) {
     const parts = year ? [year] : [];
     if (formatSelect.value) parts.push(formatSelect.value);
     if (conditionSelect.value) parts.push(conditionSelect.value.toLowerCase());
-    if (!formatSelect.value && !conditionSelect.value) return null;
+    if (parts.length === 0) return null;
     return parts.join(' ') + '.';
 }
 
@@ -236,7 +236,7 @@ function formatBookInfo(googleBookData, isbn) {
         description: (() => {
             const descriptor = buildDescriptor(extractYear(googleBookData.publishedDate));
             const bookDesc = googleBookData.description || '';
-            const mainLine = descriptor ? `${descriptor}${bookDesc ? ' ' + bookDesc : ''}` : bookDesc;
+            const mainLine = descriptor ? `${descriptor}${bookDesc ? ' ' + bookDesc : ' '}` : bookDesc;
             return `${mainLine}\nFrom recent Amazon/GoodReads reviews: ""; ""; ""`;
         })(),
         isbn: isbn
@@ -329,7 +329,7 @@ document.getElementById("isbn-form").addEventListener("submit", async function (
 
     if (!isbn.length) {
         const descriptor = buildDescriptor(null);
-        const firstLine = descriptor ? `${descriptor}\n` : '';
+        const firstLine = descriptor ? `${descriptor} \n` : '';
         document.getElementById("description-input").value =
             `${firstLine}From recent Amazon/GoodReads reviews: ""; ""; ""`;
         return;
