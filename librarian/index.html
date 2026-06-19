@@ -135,12 +135,21 @@ hr {
 }
 
 #isbn-form {
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.isbn-buttons {
-    float: right;
-    margin-top: 10px;
+.isbn-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#isbn-form select,
+#isbn-form input[type="text"] {
+    width: 250px;
+    box-sizing: border-box;
 }
 
 .isbn-buttons button {
@@ -199,27 +208,28 @@ hr {
         <div class="isbn-group">
             <h2>Librarian</h2>
             <form id="isbn-form">
-                <label for="isbn-input">ISBN:</label>
-                <input type="text" id="isbn-input" name="isbn" value="">
                 <select id="format-select">
-                    <option value="">Format...</option>
+                    <option value="" disabled selected hidden>Format...</option>
                     <option>HCDJ</option>
                     <option>HC</option>
                     <option>PB</option>
-                    <option>French-Flap PB</option>
+                    <option>french-flap PB</option>
                     <option>MMPB</option>
                     <option>Spiral-Bound</option>
                 </select>
                 <select id="condition-select">
-                    <option value="">Condition...</option>
+                    <option value="" disabled selected hidden>Condition...</option>
                     <option>in Gift-Worthy condition</option>
                     <option>in nice clean condition</option>
                     <option>with minor wear</option>
                     <option>with wear</option>
                 </select>
-                <div class="isbn-buttons">
-                    <button type="submit">Lookup</button>
-                    <button type="button" onClick="clearAndFocus()">X</button>
+                <div class="isbn-row">
+                    <input type="text" id="isbn-input" name="isbn" placeholder="ISBN">
+                    <div class="isbn-buttons">
+                        <button type="submit">Lookup</button>
+                        <button type="button" onClick="clearAndFocus()">X</button>
+                    </div>
                 </div>
             </form>
             <br>
