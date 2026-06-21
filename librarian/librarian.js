@@ -380,6 +380,10 @@ document.getElementById("isbn-form").addEventListener("submit", async function (
     `;
     } catch (error) {
         alert(error.toString());
+        const descriptor = buildDescriptor(null);
+        const firstLine = descriptor ? `${descriptor} \n` : '\n';
+        descriptionInput.value = `${firstLine}${reviewPlaceholder}`;
+        lookupDone = true;
     }
 });
 
