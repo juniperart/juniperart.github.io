@@ -307,6 +307,10 @@ async function getGoogleImageSearchResult(isbn) {
 }
 
 function copyPrevious() {
+    if (!generateArray.length) {
+        alert('No previous books.')
+        return
+    }
     copyPreviousModal.style.display = 'block'
     for (let i = 0; i < generateArray.length && i < 10; i++ ) {
         modalContent.innerHTML += `
@@ -347,7 +351,9 @@ function confirmClear() {
 // Listen for submit event on ISBN form
 document.getElementById("isbn-form").addEventListener("submit", async function (event) {
     event.preventDefault();
-    isbn = isbnInput.value;
+    isbn = isbnInput.value.replace(/[\s-]/g, '');
+    if (isbn.length === 9) isbn = '0' + isbn;
+    isbnInput.value = isbn;
     lookupBtn.disabled = true;
 
 
