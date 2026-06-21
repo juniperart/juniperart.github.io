@@ -77,13 +77,6 @@ button:disabled {
     background-color: #aaa;
 }
 
-button.danger {
-    background-color: #c0392b;
-}
-
-button.danger:hover {
-    background-color: #962d22;
-}
 
 .check {
     color: #039318;
@@ -239,7 +232,7 @@ hr {
     <div id="clearModal">
         <p>Previous book has not been saved.</p>
         <div class="modal-buttons">
-            <button type="button" class="danger" onclick="confirmClear()">Clear</button>
+            <button type="button" onclick="confirmClear()">Clear</button>
             <button type="button" onclick="closeClearModal()">Cancel</button>
         </div>
     </div>
@@ -271,7 +264,7 @@ hr {
                     <input type="text" id="isbn-input" name="isbn" placeholder="ISBN">
                     <div class="isbn-buttons">
                         <button type="submit" id="lookup-btn">Lookup</button>
-                        <button type="button" class="danger" onClick="onClearClick()">Clear</button>
+                        <button type="button" onClick="onClearClick()">Clear</button>
                     </div>
                 </div>
             </form>
