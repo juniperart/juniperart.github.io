@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
 	<title>Librarian | Books OUUC</title>
     <link rel="shortcut icon" href="#">
     <link rel="icon" type="image/png" href="../favicon.ico">
@@ -77,6 +78,11 @@ button:disabled {
     background-color: #aaa;
 }
 
+button.outline {
+    border: 2px solid #4c92c2;
+    background-color: #fff;
+    color: #4c92c2;
+}
 
 .check {
     color: #039318;
@@ -227,12 +233,30 @@ hr {
 }
 
 
+nav {
+    text-align: right;
+    padding: 10px 20px;
+    font-family: sans-serif;
+}
+
+nav a {
+    color: #4c92c2;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
 </style>
 <body>
+    <nav>
+        <a href="prescreen.html">Prescreen</a>
+    </nav>
     <div id="clearModal">
         <p>Previous book has not been saved.</p>
         <div class="modal-buttons">
-            <button type="button" onclick="confirmClear()">Clear</button>
+            <button type="button" class="outline" onclick="confirmClear()">Clear</button>
             <button type="button" onclick="closeClearModal()">Cancel</button>
         </div>
     </div>
@@ -264,7 +288,7 @@ hr {
                     <input type="text" id="isbn-input" name="isbn" placeholder="ISBN">
                     <div class="isbn-buttons">
                         <button type="submit" id="lookup-btn">Lookup</button>
-                        <button type="button" onClick="onClearClick()">Clear</button>
+                        <button type="button" class="outline" onClick="onClearClick()">Clear</button>
                     </div>
                 </div>
             </form>
@@ -298,7 +322,6 @@ hr {
             </div>
             <div class="form-group">
             <label for="keywords-input">Key Words:</label>
-            <!-- <input type="text" id="keywords-input" name="keywords"> -->
             <div id="checkbox-container"></div>
             </div>
         </form>
