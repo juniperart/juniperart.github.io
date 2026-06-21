@@ -73,6 +73,18 @@ button:hover {
     background-color: #2d6d98;
 }
 
+button:disabled {
+    background-color: #aaa;
+}
+
+button.danger {
+    background-color: #c0392b;
+}
+
+button.danger:hover {
+    background-color: #962d22;
+}
+
 .check {
     color: #039318;
     font-family: sans-serif;
@@ -197,9 +209,40 @@ hr {
     font-size: 20px;
 }
 
+#clearModal {
+    width: 300px;
+    border: 1px solid black;
+    padding: 24px;
+    position: absolute;
+    background: white;
+    z-index: 999;
+    left: 50%;
+    top: 140px;
+    transform: translate(-50%, -50%);
+    display: none;
+    font-family: sans-serif;
+}
+
+#clearModal p {
+    margin-bottom: 20px;
+}
+
+#clearModal .modal-buttons {
+    display: flex;
+    gap: 28px;
+    justify-content: center;
+}
+
 
 </style>
 <body>
+    <div id="clearModal">
+        <p>Previous book has not been saved.</p>
+        <div class="modal-buttons">
+            <button type="button" class="danger" onclick="confirmClear()">Clear</button>
+            <button type="button" onclick="closeClearModal()">Cancel</button>
+        </div>
+    </div>
     <div id="copyPreviousModal">
         <button type="button" id="closeButton" onClick="closeModal()">X</button>
         <div id="modalContent"></div>
@@ -215,7 +258,7 @@ hr {
                     <option>PB</option>
                     <option>french-flap PB</option>
                     <option>MMPB</option>
-                    <option>Spiral-Bound</option>
+                    <option>spiral-bound</option>
                 </select>
                 <select id="condition-select">
                     <option value="" disabled selected hidden>Condition...</option>
@@ -227,8 +270,8 @@ hr {
                 <div class="isbn-row">
                     <input type="text" id="isbn-input" name="isbn" placeholder="ISBN">
                     <div class="isbn-buttons">
-                        <button type="submit">Lookup</button>
-                        <button type="button" onClick="clearAndFocus()">X</button>
+                        <button type="submit" id="lookup-btn">Lookup</button>
+                        <button type="button" class="danger" onClick="onClearClick()">Clear</button>
                     </div>
                 </div>
             </form>
