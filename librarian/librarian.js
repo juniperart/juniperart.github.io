@@ -1,3 +1,5 @@
+const reviewPlaceholder = 'From recent Amazon/GoodReads reviews: ""; ""; ""';
+
 let isbnInput
 let formatSelect
 let conditionSelect
@@ -10,12 +12,15 @@ let keywords
 let photos
 let checkboxContainer
 let checkboxes
+let lookupBtn
 let previousButton
 let copyPreviousModal
 let modalContent
 let copiedText
 let generateArray = []
 let isbn = ''
+let lookupDone = false
+let generatedSuccessfully = false
 var apikey = "AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE";
 
 // defines objects
@@ -32,6 +37,7 @@ function defineObjects() {
     photos = document.getElementById("photos")
     checkboxContainer = document.getElementById('checkbox-container');
     checkboxes = document.getElementsByName('checkbox');
+    lookupBtn = document.getElementById('lookup-btn')
     previousButton = document.getElementById('previousButton')
     copyPreviousModal = document.getElementById('copyPreviousModal')
     modalContent = document.getElementById('modalContent')
@@ -78,7 +84,6 @@ function copyToClipboard(outputText, index) {
     let outputStr
     if (outputText) {
         outputStr = outputText
-        console.log(outputText)
     } else if (index !== false) {
         outputStr = generateArray[index][1]
         document.querySelectorAll('.previousButton')[index].style.backgroundColor = '#039318'
@@ -114,9 +119,11 @@ function generate(generate) {
         cleanDescription = '<p>' + cleanDescription + '</p>'
         let outputText = `${title}{${authorInput.value}{${cleanDescription}{${getCheckedValues()}{${isbn}`
         outputText = outputText.replace(/(\r\n|\n|\r)/gm, "")
-        getCheckedValues()
         output.value = outputText;
-        if (generate) copyToClipboard(outputText)
+        if (generate) {
+            copyToClipboard(outputText)
+            generatedSuccessfully = true
+        }
         if (generateArray[0] && generateArray[0][0] === title) {
             generateArray.shift()
         }
@@ -125,7 +132,6 @@ function generate(generate) {
             outputText
         ])
     }
-    console.log(generateArray)
 }
 
 function setCopied(copied) {
@@ -151,6 +157,9 @@ function clearAndFocus() {
     photos.innerHTML = '';
     setCopied(false);
     isbn = ''
+    lookupDone = false
+    generatedSuccessfully = false
+    lookupBtn.disabled = false;
 
     checkboxes?.forEach(x => {
         x.checked = false
@@ -175,10 +184,7 @@ const checkboxValues = [
     "World-Language",
 ];
 
-console.log(checkboxValues)
-
 function renderCheckboxes() {
-    //checkboxValues.sort();
     const numColumns = 3;
     const numRows = Math.ceil(checkboxValues.length / numColumns);
     const checkboxTemplate = document.createElement('template');
@@ -222,7 +228,7 @@ function getCheckedValues() {
 function buildDescriptor(year) {
     const parts = year ? [year] : [];
     if (formatSelect.value) parts.push(formatSelect.value);
-    if (conditionSelect.value) parts.push(conditionSelect.value.toLowerCase());
+    if (conditionSelect.value) parts.push(conditionSelect.value);
     if (parts.length === 0) return null;
     return parts.join(' ') + '.';
 }
@@ -237,7 +243,7 @@ function formatBookInfo(googleBookData, isbn) {
             const descriptor = buildDescriptor(extractYear(googleBookData.publishedDate));
             const bookDesc = googleBookData.description || '';
             const mainLine = descriptor ? `${descriptor}${bookDesc ? ' ' + bookDesc : ' '}` : bookDesc;
-            return `${mainLine}\nFrom recent Amazon/GoodReads reviews: ""; ""; ""`;
+            return `${mainLine}\n${reviewPlaceholder}`;
         })(),
         isbn: isbn
     }
@@ -286,13 +292,9 @@ async function fetchBookInfo(isbn) {
 }
 
 async function getGoogleImageSearchResult(isbn) {
-    var numberOfResults = 4;
-
-    // API credentials
-    var searchEngineID = "511ac3198aa8e497a";
-
-    // Building call to API
-    var url = "https://www.googleapis.com/customsearch/v1?key=" + apikey + "&cx=" + searchEngineID
+    const numberOfResults = 4;
+    const searchEngineID = "511ac3198aa8e497a";
+    const url = "https://www.googleapis.com/customsearch/v1?key=" + apikey + "&cx=" + searchEngineID
         + "&q=" + isbn + "&num=10&searchType=image";
 
     const response = await fetch(url);
@@ -306,7 +308,7 @@ async function getGoogleImageSearchResult(isbn) {
 
 function copyPrevious() {
     copyPreviousModal.style.display = 'block'
-    for (i = 0; i < generateArray.length && i < 10; i++ ) {
+    for (let i = 0; i < generateArray.length && i < 10; i++ ) {
         modalContent.innerHTML += `
             <div class="row">
                 <button class="previousButton" onclick="copyToClipboard(false, ${i})">Copy</button>
@@ -321,35 +323,63 @@ function closeModal() {
     modalContent.innerHTML = ''
 }
 
+function onClearClick() {
+    if (lookupDone && !generatedSuccessfully) {
+        openClearModal();
+    } else {
+        clearAndFocus();
+    }
+}
+
+function openClearModal() {
+    document.getElementById('clearModal').style.display = 'block';
+}
+
+function closeClearModal() {
+    document.getElementById('clearModal').style.display = 'none';
+}
+
+function confirmClear() {
+    closeClearModal();
+    clearAndFocus();
+}
+
 // Listen for submit event on ISBN form
 document.getElementById("isbn-form").addEventListener("submit", async function (event) {
     event.preventDefault();
     isbn = isbnInput.value;
+    lookupBtn.disabled = true;
 
 
     if (!isbn.length) {
         const descriptor = buildDescriptor(null);
-        const firstLine = descriptor ? `${descriptor} \n` : '';
-        document.getElementById("description-input").value =
-            `${firstLine}From recent Amazon/GoodReads reviews: ""; ""; ""`;
+        const firstLine = descriptor ? `${descriptor} \n` : '\n';
+        descriptionInput.value = `${firstLine}${reviewPlaceholder}`;
+        lookupDone = true;
         return;
     }
 
-    if (isbn.length >= 10) {
-        try {
-            const bookData = await fetchBookInfo(isbn);
+    if (/^\d{4}$/.test(isbn)) {
+        const descriptor = buildDescriptor(isbn);
+        descriptionInput.value = `${descriptor} \n${reviewPlaceholder}`;
+        lookupDone = true;
+        return;
+    }
 
-            // Populate fields in book form using bookData
-            document.getElementById("title-input").value = bookData.title;
-            document.getElementById("author-input").value = bookData.author;
-            document.getElementById("description-input").value = bookData.description;
-            document.getElementById("links").innerHTML = `
-            <p><a href=https://www.amazon.com/s?i=stripbooks&rh=p_66%3A${isbn}&s=relevanceexprank&Adv-Srch-Books-Submit.x=35&Adv-Srch-Books-Submit.y=12&unfiltered=1&ref=sr_adv_b" target="_blank">Amazon</a>
-            <p><a href=https://www.ebay.com/sh/research?marketplace=EBAY-US&keywords=${isbn}&dayRange=90&endDate=1680216616964&startDate=1672444216964&categoryId=0&offset=0&limit=50&tabName=SOLD&tz=America%2FLos_Angeles" target="_blank">Ebay</a>
-        `;
-        } catch (error) {
-            alert(error.toString());
-        }
+    try {
+        const bookData = await fetchBookInfo(isbn);
+
+        // Populate fields in book form using bookData
+        titleInput.value = bookData.title;
+        authorInput.value = bookData.author;
+        descriptionInput.value = bookData.description;
+        lookupDone = true;
+        links.innerHTML = `
+        <p><a href="https://www.amazon.com/s?i=stripbooks&rh=p_66%3A${isbn}&s=relevanceexprank&Adv-Srch-Books-Submit.x=35&Adv-Srch-Books-Submit.y=12&unfiltered=1&ref=sr_adv_b" target="_blank">Amazon</a>
+        <p><a href="https://www.ebay.com/sh/research?marketplace=EBAY-US&keywords=${isbn}&dayRange=90&endDate=1680216616964&startDate=1672444216964&categoryId=0&offset=0&limit=50&tabName=SOLD&tz=America%2FLos_Angeles" target="_blank">Ebay</a>
+    `;
+    } catch (error) {
+        alert(error.toString());
     }
 });
 
