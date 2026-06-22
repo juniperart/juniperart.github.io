@@ -22,7 +22,7 @@ let isbn = ''
 let lookupDone = false
 let generatedSuccessfully = false
 let inventory = []
-let watchList = []
+// let watchList = []
 // defines objects
 function defineObjects() {
     isbnInput = document.getElementById("isbn-input")
@@ -124,7 +124,7 @@ function generate(generate) {
             copyToClipboard(outputText)
             generatedSuccessfully = true
             checkInventory(title, authorInput.value)
-            checkWatchList(title, authorInput.value)
+            // checkWatchList(title, authorInput.value)
         }
         if (generateArray[0] && generateArray[0][0] === title) {
             generateArray.shift()
@@ -369,7 +369,7 @@ document.getElementById("isbn-form").addEventListener("submit", async function (
         descriptionInput.value = bookData.description;
         lookupDone = true;
         checkInventory(bookData.title, bookData.author);
-        checkWatchList(bookData.title, bookData.author);
+        // checkWatchList(bookData.title, bookData.author);
         links.innerHTML = `
         <p><a href="https://www.amazon.com/s?i=stripbooks&rh=p_66%3A${isbn}&s=relevanceexprank&Adv-Srch-Books-Submit.x=35&Adv-Srch-Books-Submit.y=12&unfiltered=1&ref=sr_adv_b" target="_blank">Amazon</a>
         <p><a href="https://www.ebay.com/sh/research?marketplace=EBAY-US&keywords=${isbn}&dayRange=90&endDate=1680216616964&startDate=1672444216964&categoryId=0&offset=0&limit=50&tabName=SOLD&tz=America%2FLos_Angeles" target="_blank">Ebay</a>
@@ -451,50 +451,48 @@ function checkInventory(title, author) {
     if (match) showInfoModal('inventoryModal', `<b>${match.author}</b> — ${match.title}`);
 }
 
-function isAnyTitle(title) {
-    return /\bany\b/i.test(title);
-}
+// function isAnyTitle(title) {
+//     return /\bany\b/i.test(title);
+// }
 
-function parseExceptions(title) {
-    const exceptIdx = title.search(/\bexcept\b/i);
-    if (exceptIdx === -1) return [];
-    const afterExcept = title.slice(exceptIdx + 6).replace(/^[\s:(]+/, '');
-    return afterExcept.split(';').map(part =>
-        part.replace(/\[.*?\]/g, '').replace(/[()]/g, '').trim()
-    ).filter(t => t.length > 2);
-}
+// function parseExceptions(title) {
+//     const exceptIdx = title.search(/\bexcept\b/i);
+//     if (exceptIdx === -1) return [];
+//     const afterExcept = title.slice(exceptIdx + 6).replace(/^[\s:(]+/, '');
+//     return afterExcept.split(';').map(part =>
+//         part.replace(/\[.*?\]/g, '').replace(/[()]/g, '').trim()
+//     ).filter(t => t.length > 2);
+// }
 
-function checkWatchList(title, author) {
-    const match = watchList.find(item => {
-        if (!lastNamesMatch(author, item.lastName)) return false;
-        if (isAnyTitle(item.title)) {
-            const exceptions = parseExceptions(item.title);
-            return !exceptions.some(exc => titlesLooselyMatch(title, exc));
-        }
-        return titlesLooselyMatch(title, item.title);
-    });
-    if (match) showInfoModal('watchListModal', `<b>${match.lastName}, ${match.firstName}</b> — ${match.title}`);
-}
+// function checkWatchList(title, author) {
+//     const match = watchList.find(item => {
+//         if (!lastNamesMatch(author, item.lastName)) return false;
+//         if (isAnyTitle(item.title)) {
+//             const exceptions = parseExceptions(item.title);
+//             return !exceptions.some(exc => titlesLooselyMatch(title, exc));
+//         }
+//         return titlesLooselyMatch(title, item.title);
+//     });
+//     if (match) showInfoModal('watchListModal', `<b>${match.lastName}, ${match.firstName}</b> — ${match.title}`);
+// }
 
 window.addEventListener("load", async function () {
     document.getElementById("isbn-input").focus();
     defineObjects()
     renderCheckboxes()
     try {
-        const [invRows, watchRows] = await Promise.all([
-            fetchSheetRange('inventory!A:B'),
-            fetchSheetRange('E:L')
-        ]);
+        const invRows = await fetchSheetRange('inventory!A:B');
         inventory = invRows.map(row => ({
             author: (row[0] || '').trim(),
             title: (row[1] || '').trim(),
         })).filter(r => r.author);
-        watchList = watchRows.map(row => ({
-            title: (row[0] || '').trim(),
-            firstName: (row[1] || '').trim(),
-            lastName: (row[2] || '').trim(),
-            dateFound: (row[7] || '').trim(),
-        })).filter(r => r.lastName && !r.dateFound);
+        // const watchRows = await fetchSheetRange('E:L');
+        // watchList = watchRows.map(row => ({
+        //     title: (row[0] || '').trim(),
+        //     firstName: (row[1] || '').trim(),
+        //     lastName: (row[2] || '').trim(),
+        //     dateFound: (row[7] || '').trim(),
+        // })).filter(r => r.lastName && !r.dateFound);
     } catch (error) {
         console.error('Failed to load data:', error);
     }
