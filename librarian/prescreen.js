@@ -1,10 +1,20 @@
 let books = [];
 let watchList = [];
+let isbnInput;
+let authorSearch;
+let inventoryEl;
+let watchEl;
+
+function defineObjects() {
+    isbnInput = document.getElementById('isbn-input');
+    authorSearch = document.getElementById('author-search');
+    inventoryEl = document.getElementById('csv-results');
+    watchEl = document.getElementById('watch-select');
+}
 
 function col(row, i) {
     return (row[i] || '').trim();
 }
-
 
 async function fetchInventory() {
     const rows = await fetchSheetRange('inventory!A:B');
@@ -57,13 +67,12 @@ function watchEntryMatchesTokens(entry, queryTokens) {
     const nameTokens = [entry.firstName, entry.lastName]
         .filter(t => t)
         .map(normalize);
-    return queryTokens.every(qt => nameTokens.some(nt => nt.startsWith(qt)));
+    const significant = queryTokens.filter(t => t.length > 1);
+    if (significant.length === 0) return false;
+    return significant.every(qt => nameTokens.some(nt => nt.startsWith(qt)));
 }
 
 function renderResults(query, title) {
-    const inventoryEl = document.getElementById('csv-results');
-    const watchEl = document.getElementById('watch-select');
-
     if (!query) {
         inventoryEl.innerHTML = '';
         watchEl.innerHTML = '';
@@ -99,7 +108,16 @@ async function fetchByIsbn(isbn) {
     return { author: (info.authors || [])[0] || '', title: info.title || '' };
 }
 
+function clearAndNext() {
+    isbnInput.value = '';
+    authorSearch.value = '';
+    renderResults('');
+    isbnInput.focus();
+}
+
 async function init() {
+    defineObjects();
+
     try {
         await Promise.all([
             fetchInventory().then(list => { books = list; }),
@@ -111,12 +129,11 @@ async function init() {
 
     document.getElementById('isbn-form').addEventListener('submit', async function (event) {
         event.preventDefault();
-        let isbn = document.getElementById('isbn-input').value.replace(/[\s-]/g, '');
+        let isbn = isbnInput.value.replace(/[\s-]/g, '');
         if (isbn.length === 9) isbn = '0' + isbn;
         if (!isbn) return;
         try {
             const { author, title } = await fetchByIsbn(isbn);
-            const authorSearch = document.getElementById('author-search');
             authorSearch.value = author;
             renderResults(author.trim(), title);
         } catch (error) {
@@ -124,11 +141,11 @@ async function init() {
         }
     });
 
-    document.getElementById('author-search').addEventListener('input', function () {
+    authorSearch.addEventListener('input', function () {
         renderResults(this.value.trim());
     });
 
-    document.getElementById('isbn-input').focus();
+    isbnInput.focus();
 }
 
 window.addEventListener('load', init);
