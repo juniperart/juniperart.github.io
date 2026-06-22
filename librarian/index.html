@@ -232,6 +232,35 @@ hr {
     justify-content: center;
 }
 
+.info-modal {
+    width: 340px;
+    border: 1px solid black;
+    padding: 36px 24px 24px 24px;
+    position: absolute;
+    background: white;
+    z-index: 999;
+    left: 50%;
+    top: 190px;
+    transform: translate(-50%, -50%);
+    display: none;
+    font-family: sans-serif;
+}
+
+.info-modal p {
+    margin-bottom: 20px;
+}
+
+.info-modal .modal-buttons {
+    display: flex;
+    justify-content: center;
+}
+
+#watchListModal h3 {
+    text-align: center;
+    font-size: 25px;
+    margin-top: 0;
+}
+
 
 nav {
     text-align: right;
@@ -253,6 +282,23 @@ nav a:hover {
     <nav>
         <a href="prescreen.html">Prescreen</a>
     </nav>
+    <div id="inventoryModal" class="info-modal">
+        <button type="button" id="closeButton" onclick="closeInfoModal('inventoryModal')">X</button>
+        <p><b>This book may already be in inventory.</b> Please let Susan know!</p>
+        <p id="inventoryModalMatch"></p>
+        <div class="modal-buttons">
+            <button type="button" onclick="closeInfoModal('inventoryModal')">OK</button>
+        </div>
+    </div>
+    <div id="watchListModal" class="info-modal">
+        <button type="button" id="closeButton" onclick="closeInfoModal('watchListModal')">X</button>
+        <h3>🌼 Title Watch 🌼</h3>
+        <p>This book might be on the Title Watch list:</p>
+        <p id="watchListModalMatch"></p>
+        <div class="modal-buttons">
+            <button type="button" onclick="closeInfoModal('watchListModal')">OK</button>
+        </div>
+    </div>
     <div id="clearModal">
         <p>Previous book has not been saved.</p>
         <div class="modal-buttons">
@@ -328,6 +374,7 @@ nav a:hover {
         <hr>
         <div id="photos"></div>
     </div>
+    <script src="api.js"></script>
     <script src="librarian.js"></script>
 </body>
 </html>
