@@ -1,6 +1,3 @@
-const SPREADSHEET_ID = '13FXyHziavv5lBiIBafV5TF4fnBcthYbHv8zst_pjddA';
-const apikey = 'AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE';
-
 let books = [];
 let watchList = [];
 
@@ -8,15 +5,6 @@ function col(row, i) {
     return (row[i] || '').trim();
 }
 
-async function fetchSheetRange(range) {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${apikey}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    if (!response.ok) {
-        throw new Error(data?.error?.message || `Google Sheets error ${response.status}`);
-    }
-    return (data.values || []).slice(1);
-}
 
 async function fetchInventory() {
     const rows = await fetchSheetRange('inventory!A:B');
