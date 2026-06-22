@@ -272,25 +272,11 @@ function addImages(hrefs) {
     }, 1500);
 }
 
-// Define a function to fetch book information from an API using ISBN
 async function fetchBookInfo(isbn) {
-  await getImages(isbn);
-  const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${apikey}`);
-
-  const text = await response.text();           // read body ONCE
-  const data = text ? JSON.parse(text) : null;  // parse if present
-
-  if (!response.ok) {
-    throw new Error(data?.error?.message || `Google Books error ${response.status}`);
-  }
-
-  if (!data?.items?.length) {
-    throw new Error('No data returned for ISBN');
-  }
-
-  setCopied(false);
-
-  return formatBookInfo(data.items[0].volumeInfo, isbn);
+    await getImages(isbn);
+    const volumeInfo = await fetchGoogleBookByIsbn(isbn);
+    setCopied(false);
+    return formatBookInfo(volumeInfo, isbn);
 }
 
 async function getGoogleImageSearchResult(isbn) {

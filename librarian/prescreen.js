@@ -25,7 +25,22 @@ async function fetchWatchList() {
 }
 
 function normalize(str) {
-    return str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    return str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9\s]/g, '');
+}
+
+const STOP_WORDS = new Set([
+    'the', 'a', 'an', 'of', 'in', 'on', 'at', 'to',
+    'for', 'and', 'or', 'but', 'with', 'by', 'from',
+]);
+
+function titleMatchesQuery(inventoryTitle, queryTitle) {
+    const getWords = str => normalize(str).split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
+    const wordsA = getWords(inventoryTitle);
+    const wordsB = getWords(queryTitle);
+    const shorter = wordsA.length <= wordsB.length ? wordsA : wordsB;
+    const longer = wordsA.length <= wordsB.length ? wordsB : wordsA;
+    if (shorter.length === 0) return false;
+    return shorter.filter(w => longer.includes(w)).length / shorter.length >= 0.6;
 }
 
 function getQueryTokens(query) {
@@ -45,7 +60,7 @@ function watchEntryMatchesTokens(entry, queryTokens) {
     return queryTokens.every(qt => nameTokens.some(nt => nt.startsWith(qt)));
 }
 
-function renderResults(query) {
+function renderResults(query, title) {
     const inventoryEl = document.getElementById('csv-results');
     const watchEl = document.getElementById('watch-select');
 
@@ -59,6 +74,7 @@ function renderResults(query) {
 
     const inventoryMatches = books
         .filter(b => authorMatchesTokens(b.author, queryTokens))
+        .filter(b => !title || titleMatchesQuery(b.title, title))
         .sort((a, b) => a.author.localeCompare(b.author));
     inventoryEl.innerHTML = inventoryMatches.map(b => `
         <div class="result-item">
@@ -78,6 +94,11 @@ function renderResults(query) {
     `).join('');
 }
 
+async function fetchByIsbn(isbn) {
+    const info = await fetchGoogleBookByIsbn(isbn);
+    return { author: (info.authors || [])[0] || '', title: info.title || '' };
+}
+
 async function init() {
     try {
         await Promise.all([
@@ -88,11 +109,26 @@ async function init() {
         alert(error.toString());
     }
 
+    document.getElementById('isbn-form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+        let isbn = document.getElementById('isbn-input').value.replace(/[\s-]/g, '');
+        if (isbn.length === 9) isbn = '0' + isbn;
+        if (!isbn) return;
+        try {
+            const { author, title } = await fetchByIsbn(isbn);
+            const authorSearch = document.getElementById('author-search');
+            authorSearch.value = author;
+            renderResults(author.trim(), title);
+        } catch (error) {
+            alert(error.toString());
+        }
+    });
+
     document.getElementById('author-search').addEventListener('input', function () {
         renderResults(this.value.trim());
     });
 
-    document.getElementById('author-search').focus();
+    document.getElementById('isbn-input').focus();
 }
 
 window.addEventListener('load', init);
