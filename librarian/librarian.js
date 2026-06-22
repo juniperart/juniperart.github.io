@@ -436,7 +436,7 @@ function lastNamesMatch(a, b) {
 }
 
 function showInfoModal(modalId, matchHtml) {
-    document.getElementById(modalId + 'Match').innerHTML = matchHtml;
+   // document.getElementById(modalId + 'Match').innerHTML = matchHtml;
     document.getElementById(modalId).style.display = 'block';
 }
 
