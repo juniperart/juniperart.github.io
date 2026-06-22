@@ -21,8 +21,8 @@ let generateArray = []
 let isbn = ''
 let lookupDone = false
 let generatedSuccessfully = false
-var apikey = "AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE";
-
+let inventory = []
+let watchList = []
 // defines objects
 function defineObjects() {
     isbnInput = document.getElementById("isbn-input")
@@ -123,6 +123,8 @@ function generate(generate) {
         if (generate) {
             copyToClipboard(outputText)
             generatedSuccessfully = true
+            checkInventory(title, authorInput.value)
+            checkWatchList(title, authorInput.value)
         }
         if (generateArray[0] && generateArray[0][0] === title) {
             generateArray.shift()
@@ -380,6 +382,8 @@ document.getElementById("isbn-form").addEventListener("submit", async function (
         authorInput.value = bookData.author;
         descriptionInput.value = bookData.description;
         lookupDone = true;
+        checkInventory(bookData.title, bookData.author);
+        checkWatchList(bookData.title, bookData.author);
         links.innerHTML = `
         <p><a href="https://www.amazon.com/s?i=stripbooks&rh=p_66%3A${isbn}&s=relevanceexprank&Adv-Srch-Books-Submit.x=35&Adv-Srch-Books-Submit.y=12&unfiltered=1&ref=sr_adv_b" target="_blank">Amazon</a>
         <p><a href="https://www.ebay.com/sh/research?marketplace=EBAY-US&keywords=${isbn}&dayRange=90&endDate=1680216616964&startDate=1672444216964&categoryId=0&offset=0&limit=50&tabName=SOLD&tz=America%2FLos_Angeles" target="_blank">Ebay</a>
@@ -406,8 +410,106 @@ document.getElementById("book-form").addEventListener("submit", function (event)
     };
 });
 
-window.addEventListener("load", function () {
+const STOP_WORDS = new Set(['the', 'a', 'an', 'of', 'in', 'on', 'at', 'to', 'for', 'and', 'or', 'but', 'with', 'by', 'from']);
+
+function normalizeStr(str) {
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9\s]/g, '');
+}
+
+function getNameTokens(author) {
+    return normalizeStr(author).split(/[\s,]+/).filter(t => t.length > 1);
+}
+
+function getTitleWords(title) {
+    return normalizeStr(title).split(/[\s:,\-]+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
+}
+
+function authorsLooselyMatch(a, b) {
+    const tokensA = getNameTokens(a);
+    const tokensB = getNameTokens(b);
+    const lastA = tokensA[0];
+    const lastB = tokensB[0];
+    if (!lastA || lastA !== lastB) return false;
+    const firstA = tokensA.slice(1);
+    const firstB = tokensB.slice(1);
+    return firstA.some(ta => firstB.some(tb => ta.startsWith(tb) || tb.startsWith(ta)));
+}
+
+function titlesLooselyMatch(a, b) {
+    const wordsA = getTitleWords(a);
+    const wordsB = getTitleWords(b);
+    const shorter = wordsA.length <= wordsB.length ? wordsA : wordsB;
+    const longer = wordsA.length <= wordsB.length ? wordsB : wordsA;
+    if (shorter.length === 0) return false;
+    const overlap = shorter.filter(w => longer.includes(w));
+    return overlap.length / shorter.length >= 0.6;
+}
+
+function lastNamesMatch(a, b) {
+    return getNameTokens(a)[0] === normalizeStr(b).split(/[\s,]+/)[0];
+}
+
+function showInfoModal(modalId, matchHtml) {
+    document.getElementById(modalId + 'Match').innerHTML = matchHtml;
+    document.getElementById(modalId).style.display = 'block';
+}
+
+function closeInfoModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+function checkInventory(title, author) {
+    const match = inventory.find(item =>
+        lastNamesMatch(author, item.author) && titlesLooselyMatch(title, item.title)
+    );
+    if (match) showInfoModal('inventoryModal', `<b>${match.author}</b> — ${match.title}`);
+}
+
+function isAnyTitle(title) {
+    return /\bany\b/i.test(title);
+}
+
+function parseExceptions(title) {
+    const exceptIdx = title.search(/\bexcept\b/i);
+    if (exceptIdx === -1) return [];
+    const afterExcept = title.slice(exceptIdx + 6).replace(/^[\s:(]+/, '');
+    return afterExcept.split(';').map(part =>
+        part.replace(/\[.*?\]/g, '').replace(/[()]/g, '').trim()
+    ).filter(t => t.length > 2);
+}
+
+function checkWatchList(title, author) {
+    const match = watchList.find(item => {
+        if (!lastNamesMatch(author, item.lastName)) return false;
+        if (isAnyTitle(item.title)) {
+            const exceptions = parseExceptions(item.title);
+            return !exceptions.some(exc => titlesLooselyMatch(title, exc));
+        }
+        return titlesLooselyMatch(title, item.title);
+    });
+    if (match) showInfoModal('watchListModal', `<b>${match.lastName}, ${match.firstName}</b> — ${match.title}`);
+}
+
+window.addEventListener("load", async function () {
     document.getElementById("isbn-input").focus();
     defineObjects()
     renderCheckboxes()
+    try {
+        const [invRows, watchRows] = await Promise.all([
+            fetchSheetRange('inventory!A:B'),
+            fetchSheetRange('E:L')
+        ]);
+        inventory = invRows.map(row => ({
+            author: (row[0] || '').trim(),
+            title: (row[1] || '').trim(),
+        })).filter(r => r.author);
+        watchList = watchRows.map(row => ({
+            title: (row[0] || '').trim(),
+            firstName: (row[1] || '').trim(),
+            lastName: (row[2] || '').trim(),
+            dateFound: (row[7] || '').trim(),
+        })).filter(r => r.lastName && !r.dateFound);
+    } catch (error) {
+        console.error('Failed to load data:', error);
+    }
 });
