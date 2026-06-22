@@ -103,17 +103,18 @@ function renderResults(query, title) {
     `).join('');
 }
 
-async function fetchByIsbn(isbn) {
-    const info = await fetchGoogleBookByIsbn(isbn);
-    return { author: (info.authors || [])[0] || '', title: info.title || '' };
-}
-
-function clearAndNext() {
+function clearAll() {
     isbnInput.value = '';
     authorSearch.value = '';
     renderResults('');
     isbnInput.focus();
 }
+
+async function fetchByIsbn(isbn) {
+    const info = await fetchGoogleBookByIsbn(isbn);
+    return { author: (info.authors || [])[0] || '', title: info.title || '' };
+}
+
 
 async function init() {
     defineObjects();
@@ -136,6 +137,8 @@ async function init() {
             const { author, title } = await fetchByIsbn(isbn);
             authorSearch.value = author;
             renderResults(author.trim(), title);
+            isbnInput.value = '';
+            isbnInput.focus();
         } catch (error) {
             alert(error.toString());
         }
