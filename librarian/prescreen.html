@@ -69,12 +69,16 @@ input[type="text"] {
 }
 
 .result-title {
-    display: list-item;
-    list-style-type: disc;
-    color: #666;
+    display: block;
+    color: #3e3e3e;
     font-size: 18px;
     margin-top: 2px;
-    margin-left: 32px;
+    margin-left: 16px;
+    padding-left: 16px;
+    text-indent: -16px;
+}
+.result-title::before {
+    content: '• ';
 }
 
 </style>
