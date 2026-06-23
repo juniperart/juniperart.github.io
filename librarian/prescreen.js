@@ -35,7 +35,7 @@ async function fetchWatchList() {
 }
 
 function normalize(str) {
-    return str.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9\s]/g, '');
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9\s]/g, '');
 }
 
 const STOP_WORDS = new Set([
@@ -85,10 +85,21 @@ function renderResults(query, title) {
         .filter(b => authorMatchesTokens(b.author, queryTokens))
         .filter(b => !title || titleMatchesQuery(b.title, title))
         .sort((a, b) => a.author.localeCompare(b.author));
-    inventoryEl.innerHTML = inventoryMatches.map(b => `
+
+    const grouped = [];
+    const seen = new Map();
+    inventoryMatches.forEach(b => {
+        if (!seen.has(b.author)) {
+            seen.set(b.author, []);
+            grouped.push({ author: b.author, books: seen.get(b.author) });
+        }
+        seen.get(b.author).push(b);
+    });
+    grouped.forEach(g => g.books.sort((a, b) => a.title.localeCompare(b.title)));
+    inventoryEl.innerHTML = grouped.map(g => `
         <div class="result-item">
-            <span class="result-author">${b.author}</span>
-            <span class="result-title">${b.title}</span>
+            <span class="result-author">${g.author}</span>
+            ${g.books.map(b => `<span class="result-title">${b.title}</span>`).join('')}
         </div>
     `).join('');
 
