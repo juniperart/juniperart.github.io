@@ -59,7 +59,7 @@ function getQueryTokens(query) {
 
 function authorMatchesTokens(author, queryTokens) {
     const firstAuthor = normalize(author).split(/\band\b|&/)[0];
-    const authorTokens = firstAuthor.split(/[\s,]+/);
+    const authorTokens = firstAuthor.split(/[\s,]+/).filter(t => t);
     return queryTokens.every(qt => authorTokens.some(at => at.startsWith(qt)));
 }
 
@@ -151,6 +151,7 @@ async function init() {
             isbnInput.value = '';
             isbnInput.focus();
         } catch (error) {
+            console.error(error);
             alert(error.toString());
         }
     });
