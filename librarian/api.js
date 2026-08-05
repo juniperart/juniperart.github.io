@@ -5,7 +5,10 @@ async function fetchGoogleBookByIsbn(isbn) {
     const response = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${apikey}`);
     const text = await response.text();
     const data = text ? JSON.parse(text) : null;
-    if (!response.ok) { console.error('Google Books API response:', data); throw new Error(data?.error?.message || `Google Books error ${response.status}`); }
+    if (!response.ok) {
+        console.error('Google Books API response:', data);
+        throw new Error(`Google Books API error\nStatus: ${response.status} ${response.statusText}\n${text || '(empty response body)'}`);
+    }
     if (!data?.items?.length) { console.error('Google Books API response:', data); throw new Error('No data returned for ISBN'); }
     return data.items[0].volumeInfo;
 }
@@ -13,9 +16,11 @@ async function fetchGoogleBookByIsbn(isbn) {
 async function fetchSheetRange(range) {
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}?key=${apikey}`;
     const response = await fetch(url);
-    const data = await response.json();
+    const text = await response.text();
+    const data = text ? JSON.parse(text) : null;
     if (!response.ok) {
-        throw new Error(data?.error?.message || `Google Sheets error ${response.status}`);
+        console.error('Google Sheets API response:', data);
+        throw new Error(`Google Sheets API error\nStatus: ${response.status} ${response.statusText}\n${text || '(empty response body)'}`);
     }
     return (data.values || []).slice(1);
 }
