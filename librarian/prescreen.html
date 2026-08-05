@@ -63,11 +63,35 @@ input[type="text"] {
 }
 
 #watch-select .result-item {
+    position: relative;
     background-color: #fff6a3;
     padding: 8px 12px;
     border-bottom: none;
     border-radius: 4px;
     margin-bottom: 6px;
+}
+
+#watch-select .result-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background-image:
+        linear-gradient(90deg, #000 50%, transparent 50%),
+        linear-gradient(90deg, #000 50%, transparent 50%),
+        linear-gradient(0deg, #000 50%, transparent 50%),
+        linear-gradient(0deg, #000 50%, transparent 50%);
+    background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+    background-size: 8px 2px, 8px 2px, 2px 8px, 2px 8px;
+    background-position: 0 0, 0 100%, 0 0, 100% 0;
+    animation: marching-ants 0.4s linear infinite;
+}
+
+@keyframes marching-ants {
+    to {
+        background-position: 8px 0, -8px 100%, 0 -8px, 100% 8px;
+    }
 }
 
 .result-author {
