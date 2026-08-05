@@ -123,7 +123,8 @@ function clearAll() {
 
 async function fetchByIsbn(isbn) {
     const info = await fetchGoogleBookByIsbn(isbn);
-    return { author: (info.authors || [])[0] || '', title: info.title || '' };
+    const subtitle = info.subtitle ? `: ${info.subtitle}` : '';
+    return { author: (info.authors || [])[0] || '', title: `${info.title || ''}${subtitle}` };
 }
 
 
