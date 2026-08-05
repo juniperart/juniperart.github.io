@@ -407,7 +407,7 @@ function getNameTokens(author) {
 }
 
 function getTitleWords(title) {
-    return normalizeStr(title).split(/[\s:,\-]+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
+    return normalizeStr(stripTitleNoise(title)).split(/[\s:,\-]+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
 }
 
 function authorsLooselyMatch(a, b) {

@@ -1,6 +1,17 @@
 const apikey = 'AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE';
 const SPREADSHEET_ID = '13FXyHziavv5lBiIBafV5TF4fnBcthYbHv8zst_pjddA';
 
+// Super-soft title matching: parenthetical content (edition, award badges,
+// series numbers, anything) and bracketed catalog IDs ("[B1837]") are never
+// part of a book's core identity, and anything after the first colon is
+// treated as subtitle/noise too - only the text before the colon is compared.
+// This is intentionally loose: it's what makes e.g. a large-print copy match
+// its regular counterpart, at the cost of also glossing over small wording
+// differences (typos, near-duplicate titles) before the colon.
+function stripTitleNoise(title) {
+    return title.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '').split(':')[0].trim();
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }

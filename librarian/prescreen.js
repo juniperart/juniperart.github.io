@@ -44,7 +44,7 @@ const STOP_WORDS = new Set([
 ]);
 
 function titleMatchesQuery(inventoryTitle, queryTitle) {
-    const getWords = str => normalize(str).split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
+    const getWords = str => normalize(stripTitleNoise(str)).split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
     const wordsA = getWords(inventoryTitle);
     const wordsB = getWords(queryTitle);
     const shorter = wordsA.length <= wordsB.length ? wordsA : wordsB;
