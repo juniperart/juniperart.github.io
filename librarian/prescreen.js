@@ -66,7 +66,7 @@ function authorMatchesTokens(author, queryTokens) {
 function watchEntryMatchesTokens(entry, queryTokens) {
     const nameTokens = [entry.firstName, entry.lastName]
         .filter(t => t)
-        .map(normalize);
+        .flatMap(t => normalize(t).split(/\s+/).filter(w => w));
     const significant = queryTokens.filter(t => t.length > 1);
     if (significant.length === 0) return false;
     return significant.every(qt => nameTokens.some(nt => nt.startsWith(qt)));
