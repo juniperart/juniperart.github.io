@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(curl -s \"https://sheets.googleapis.com/v4/spreadsheets/13FXyHziavv5lBiIBafV5TF4fnBcthYbHv8zst_pjddA/values/inventory!A:B?key=AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE\")",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "Bash(curl -s \"https://www.googleapis.com/books/v1/volumes?q=intitle:Living+Buddha+Living+Christ&key=AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE\")",
+      "Bash(curl -s \"https://www.googleapis.com/books/v1/volumes?q=intitle:The+Art+of+Happiness&key=AIzaSyA_arhU6mmyfFViFKbuSezjVoenUzxTpeE\")"
     ]
   }
 }

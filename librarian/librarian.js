@@ -44,17 +44,52 @@ function defineObjects() {
     copiedText = document.querySelector('.check')
 }
 
+// Authors whose Google Books "name" is actually a title, not a First/Last
+// name - reordering them as Last, First produces nonsense (e.g. "Lama, Dalai").
+const TITLE_ONLY_AUTHORS = [
+    /^(the\s+)?dalai lama(\s+[ivxlcdm]+)?$/i,
+];
+
+// Trailing tokens that are suffixes/degrees, not surnames (e.g. "Howard
+// Cutler, M.D." -> the surname is "Cutler", not "M.D.").
+function isNameSuffix(token) {
+    const clean = token.replace(/[.,]/g, '');
+    return /^(jr|sr|ii|iii|iv|v|vi|vii|viii|ix|x|xi|xii|xiii|xiv|xv|md|phd|edd|dds|esq|msw|rn|do)$/i.test(clean);
+}
+
 function formatAuthorNames(authors) {
     let formattedAuthors = '';
     // Format the first author
     if (authors[0]) {
-        let authorParts = authors[0].split(' ');
-        let firstName = authorParts[0];
-        let lastName = authorParts[authorParts.length - 1];
-        let middleNames = authorParts?.slice(1, authorParts.length - 1).join(' ');
-        formattedAuthors = `${lastName}, ${firstName}` 
-        if (middleNames) {
-            formattedAuthors += ` ${middleNames}`;
+        const rawName = authors[0].trim();
+
+        if (TITLE_ONLY_AUTHORS.some(re => re.test(rawName))) {
+            // Not a personal name - leave it as-is rather than reordering it.
+            formattedAuthors = rawName;
+        } else {
+            let authorParts = rawName.split(' ').map(p => p.replace(/,$/, ''));
+
+            // A trailing "(Honorific)" note (e.g. "(Thích)") isn't a surname -
+            // set it aside and reformat around it instead of using it as one.
+            let trailingNote = '';
+            if (authorParts.length > 1 && /^\(.*\)$/.test(authorParts[authorParts.length - 1])) {
+                trailingNote = ' ' + authorParts.pop();
+            }
+
+            // Same idea for a trailing suffix/degree.
+            let trailingSuffix = '';
+            if (authorParts.length > 1 && isNameSuffix(authorParts[authorParts.length - 1])) {
+                trailingSuffix = ', ' + authorParts.pop();
+            }
+
+            let firstName = authorParts[0];
+            let lastName = authorParts[authorParts.length - 1];
+            let middleNames = authorParts?.slice(1, authorParts.length - 1).join(' ');
+            formattedAuthors = `${lastName}, ${firstName}`
+            if (middleNames) {
+                formattedAuthors += ` ${middleNames}`;
+            }
+            formattedAuthors += trailingSuffix + trailingNote;
         }
     }
 
