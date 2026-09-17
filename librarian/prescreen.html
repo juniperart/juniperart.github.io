@@ -110,6 +110,22 @@ input[type="text"] {
     text-indent: -16px;
 }
 
+#snoopy {
+    display: none;
+    width: 220px;
+    margin: 16px 0 0 0;
+    animation: snoopy-flip 1.5s steps(1, end) infinite;
+}
+
+#snoopy.visible {
+    display: block;
+}
+
+@keyframes snoopy-flip {
+    0%, 49.99% { transform: scaleX(1); }
+    50%, 100% { transform: scaleX(-1); }
+}
+
 </style>
 <body>
     <nav>
@@ -135,6 +151,7 @@ input[type="text"] {
             <div class="results-col" id="watch-results">
                 <h3>Title Watch</h3>
                 <div id="watch-select"></div>
+                <img id="snoopy" src="images/snoopy.png" alt="Snoopy">
             </div>
         </div>
     </div>
