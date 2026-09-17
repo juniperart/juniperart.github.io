@@ -4,14 +4,12 @@ let isbnInput;
 let authorSearch;
 let inventoryEl;
 let watchEl;
-let snoopyEl;
 
 function defineObjects() {
     isbnInput = document.getElementById('isbn-input');
     authorSearch = document.getElementById('author-search');
     inventoryEl = document.getElementById('csv-results');
     watchEl = document.getElementById('watch-select');
-    snoopyEl = document.getElementById('snoopy');
 }
 
 function col(row, i) {
@@ -78,7 +76,6 @@ function renderResults(query, title) {
     if (!query) {
         inventoryEl.innerHTML = '';
         watchEl.innerHTML = '';
-        snoopyEl.classList.remove('visible');
         return;
     }
 
@@ -109,7 +106,6 @@ function renderResults(query, title) {
     const watchMatches = watchList
         .filter(w => watchEntryMatchesTokens(w, queryTokens))
         .sort((a, b) => a.lastName.localeCompare(b.lastName));
-    snoopyEl.classList.toggle('visible', watchMatches.length > 0);
     watchEl.innerHTML = watchMatches.map(w => `
         <div class="result-item">
             <span class="result-author">${w.lastName}, ${w.firstName}</span>
