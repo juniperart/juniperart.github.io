@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>QR Code Generator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="icon" type="image/png" href="../favicon.ico">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <h1>QR Code Generator</h1>
+
+        <div class="panel">
+            <label for="text">Text or URL</label>
+            <textarea id="text" rows="3" placeholder="https://example.com"></textarea>
+
+            <div class="row">
+                <div class="field">
+                    <label for="size">Size</label>
+                    <select id="size">
+                        <option value="128">128 x 128</option>
+                        <option value="200">200 x 200</option>
+                        <option value="256" selected>256 x 256</option>
+                        <option value="320">320 x 320</option>
+                        <option value="512">512 x 512</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="correctLevel">Error correction</label>
+                    <select id="correctLevel">
+                        <option value="L">Low (7%)</option>
+                        <option value="M" selected>Medium (15%)</option>
+                        <option value="Q">Quartile (25%)</option>
+                        <option value="H">High (30%)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label for="colorDark">Foreground</label>
+                    <input type="color" id="colorDark" value="#000000">
+                </div>
+
+                <div class="field">
+                    <label for="colorLight">Background</label>
+                    <input type="color" id="colorLight" value="#ffffff">
+                </div>
+            </div>
+        </div>
+
+        <div id="qrcode"></div>
+
+        <div class="actions">
+            <button id="download">Download PNG</button>
+        </div>
+    </main>
+
+    <script src="qrcode.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
