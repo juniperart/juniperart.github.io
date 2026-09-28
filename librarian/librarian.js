@@ -1,10 +1,25 @@
 const reviewPlaceholder = 'From recent Amazon/GoodReads reviews: ""; ""; ""';
+const defaultPrice = '4.00';
+
+const PRICE_OPTIONS = ['2.50', '3.00', '3.50', '4.00', '5.00', '6.00', '7.00', '8.00', '9.00', '10.00'];
+
+function renderPriceOptions() {
+    priceInput.innerHTML = '';
+    PRICE_OPTIONS.forEach(value => {
+        const option = document.createElement('option');
+        option.value = value; // plain number - this is what ends up in the generated output
+        option.textContent = `$${value}`; // dollar sign is just for display in the dropdown
+        if (value === defaultPrice) option.selected = true;
+        priceInput.appendChild(option);
+    });
+}
 
 let isbnInput
 let formatSelect
 let conditionSelect
 let titleInput
 let authorInput
+let priceInput
 let descriptionInput
 let links
 let output
@@ -30,6 +45,7 @@ function defineObjects() {
     conditionSelect = document.getElementById("condition-select")
     titleInput = document.getElementById("title-input")
     authorInput = document.getElementById("author-input")
+    priceInput = document.getElementById("price-input")
     descriptionInput = document.getElementById("description-input")
     links = document.getElementById("links")
     output = document.getElementById('output')
@@ -152,7 +168,7 @@ function generate(generate) {
         .replace(/[\u2122]/g, '')
         .replace(/(\r\n|\n|\r)/gm, '</p><p>')
         cleanDescription = '<p>' + cleanDescription + '</p>'
-        let outputText = `${title}{${authorInput.value}{${cleanDescription}{${getCheckedValues()}{${isbn}`
+        let outputText = `${title}{${authorInput.value}{${cleanDescription}{${getCheckedValues()}{${isbn}{${parseFloat(priceInput.value)}`
         outputText = outputText.replace(/(\r\n|\n|\r)/gm, "")
         output.value = outputText;
         if (generate) {
@@ -188,6 +204,7 @@ function clearAndFocus() {
     conditionSelect.value = '';
     titleInput.value = '';
     authorInput.value = '';
+    priceInput.value = defaultPrice;
     descriptionInput.value = '';
     links.innerHTML = '';
     output.value = '';
@@ -515,6 +532,7 @@ window.addEventListener("load", async function () {
     document.getElementById("isbn-input").focus();
     defineObjects()
     renderCheckboxes()
+    renderPriceOptions()
     try {
         const invRows = await fetchSheetRange('inventory!A:B');
         inventory = invRows.map(row => ({
