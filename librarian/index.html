@@ -239,7 +239,7 @@ hr {
     <div id="inventoryModal" class="info-modal">
         <button type="button" id="closeButton" onclick="closeInfoModal('inventoryModal')">X</button>
         <p><b> This title may already be in Book Nook.</b></p>
-        <p>Please insert a <b>Restock bookmark</b>, place the book at the back of your box, and move on to your next book.</p>
+        <p>Please click on OK/Clear/Clear, then place the book at the back of your box (facing backwards with no bookmark), and move on to your next book.</p>
         <!-- <p id="inventoryModalMatch"></p> -->
         <div class="modal-buttons">
             <button type="button" onclick="closeInfoModal('inventoryModal')">OK</button>
@@ -280,10 +280,11 @@ hr {
                 </select>
                 <select id="condition-select">
                     <option value="" disabled selected hidden>Condition...</option>
-                    <option>in Gift-Worthy condition</option>
-                    <option>in nice clean condition</option>
-                    <option>with minor wear</option>
-                    <option>with wear</option>
+                    <option value=" in Gift-Worthy condition">in Gift-Worthy condition</option>
+                    <option value=" in nice clean condition">in nice clean condition</option>
+                    <option value=" with minor wear">with minor wear</option>
+                    <option value=", clean with minor cover wear">clean with minor cover wear</option>
+                    <option value=" with wear">with wear</option>
                 </select>
                 <select id="price-input" name="price"></select>
                 <div class="isbn-row">

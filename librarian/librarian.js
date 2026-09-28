@@ -282,9 +282,11 @@ function getCheckedValues() {
 function buildDescriptor(year) {
     const parts = year ? [year] : [];
     if (formatSelect.value) parts.push(formatSelect.value);
-    if (conditionSelect.value) parts.push(conditionSelect.value);
-    if (parts.length === 0) return null;
-    return parts.join(' ') + '.';
+    const condition = conditionSelect.value || '';
+    if (parts.length === 0 && !condition) return null;
+    // Condition options carry their own leading space (or comma) already,
+    // so it's appended directly rather than joined with another space.
+    return parts.join(' ') + condition + '.';
 }
 
 function formatBookInfo(googleBookData, isbn) {
