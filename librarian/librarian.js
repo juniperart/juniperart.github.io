@@ -122,6 +122,7 @@ function formatAuthorNames(authors) {
 
 function extractYear(dateString) {
     let dateObj;
+    if (!dateString) return '';
     if (dateString.length === 4) {
         return dateString;
     } else {

@@ -36,14 +36,46 @@ async function fetchWithRetry(url, { retries = 2, delayMs = 600 } = {}) {
     }
 }
 
+// Google's isbn: search has been known to silently return zero results for
+// every ISBN, so when Google fails or comes up empty we fall back to Open
+// Library. Both paths return the Google volumeInfo shape callers expect.
 async function fetchGoogleBookByIsbn(isbn) {
-    const { response, data, text } = await fetchWithRetry(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${apikey}`);
-    if (!response.ok) {
-        console.error('Google Books API response:', data);
-        throw new Error(`Google Books API error\nStatus: ${response.status} ${response.statusText}\n${text || '(empty response body)'}`);
+    let googleError;
+    try {
+        const { response, data, text } = await fetchWithRetry(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${apikey}`);
+        if (!response.ok) {
+            console.error('Google Books API response:', data);
+            googleError = `Google Books API error\nStatus: ${response.status} ${response.statusText}\n${text || '(empty response body)'}`;
+        } else if (data?.items?.length) {
+            return data.items[0].volumeInfo;
+        } else {
+            console.warn('Google Books API returned no matches, trying Open Library:', data);
+        }
+    } catch (error) {
+        console.error('Google Books API request failed:', error);
+        googleError = `Google Books API request failed: ${error}`;
     }
-    if (!data?.items?.length) { console.error('Google Books API response:', data); throw new Error('No data returned for ISBN'); }
-    return data.items[0].volumeInfo;
+
+    const openLibraryInfo = await fetchOpenLibraryBookByIsbn(isbn);
+    if (openLibraryInfo) {
+        console.warn('Google Books had no match for this ISBN, so the info came from Open Library instead.');
+        return openLibraryInfo;
+    }
+    throw new Error(googleError ? `${googleError}\n\nOpen Library also had no match.` : 'No data returned for ISBN (checked Google Books and Open Library)');
+}
+
+async function fetchOpenLibraryBookByIsbn(isbn) {
+    const key = `ISBN:${isbn}`;
+    const { response, data } = await fetchWithRetry(`https://openlibrary.org/api/books?bibkeys=${key}&format=json&jscmd=data`);
+    const book = response.ok ? data?.[key] : null;
+    if (!book) { console.error('Open Library response:', data); return null; }
+    return {
+        title: book.title,
+        subtitle: book.subtitle,
+        authors: (book.authors || []).map(a => a.name),
+        publishedDate: book.publish_date,
+        description: typeof book.description === 'string' ? book.description : book.description?.value
+    };
 }
 
 async function fetchSheetRange(range) {
