@@ -39,36 +39,74 @@ async function fetchWithRetry(url, { retries = 2, delayMs = 600 } = {}) {
 // Google's isbn: search has been known to silently return zero results for
 // every ISBN, so when Google fails or comes up empty we fall back to Open
 // Library. Both paths return the Google volumeInfo shape callers expect.
+// Every step logs with a [Book lookup] prefix, ending in a summary of which
+// source supplied each field.
 async function fetchGoogleBookByIsbn(isbn) {
+    const log = (...args) => console.info(`[Book lookup] ${isbn}:`, ...args);
     let googleError;
     try {
         const { response, data, text } = await fetchWithRetry(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${apikey}`);
         if (!response.ok) {
-            console.error('Google Books API response:', data);
+            log(`Google ISBN search: error ${response.status}`, data);
             googleError = `Google Books API error\nStatus: ${response.status} ${response.statusText}\n${text || '(empty response body)'}`;
         } else if (data?.items?.length) {
-            return data.items[0].volumeInfo;
+            const info = data.items[0].volumeInfo;
+            log(`Google ISBN search: found "${info.title}"`);
+            logSources(isbn, info, { all: 'Google ISBN search (exact edition)' });
+            return info;
         } else {
-            console.warn('Google Books API returned no matches, trying Open Library:', data);
+            log('Google ISBN search: no matches, trying Open Library', data);
         }
     } catch (error) {
-        console.error('Google Books API request failed:', error);
+        log('Google ISBN search: request failed, trying Open Library', error);
         googleError = `Google Books API request failed: ${error}`;
     }
 
     const openLibraryInfo = await fetchOpenLibraryBookByIsbn(isbn);
-    if (openLibraryInfo) {
-        console.warn('Google Books had no match for this ISBN, so the info came from Open Library instead.');
-        if (!openLibraryInfo.description) {
-            try {
-                openLibraryInfo.description = await fetchGoogleDescriptionByTitle(openLibraryInfo.title, openLibraryInfo.authors);
-            } catch (error) {
-                console.warn('Google Books description lookup failed:', error);
-            }
-        }
-        return openLibraryInfo;
+    if (!openLibraryInfo) {
+        log('Open Library: no match');
+        throw new Error(googleError ? `${googleError}\n\nOpen Library also had no match.` : 'No data returned for ISBN (checked Google Books and Open Library)');
     }
-    throw new Error(googleError ? `${googleError}\n\nOpen Library also had no match.` : 'No data returned for ISBN (checked Google Books and Open Library)');
+    log(`Open Library: found "${openLibraryInfo.title}" by ${openLibraryInfo.authors.join(', ') || '(no author)'}`);
+
+    const sources = {
+        title: 'Open Library',
+        authors: 'Open Library',
+        publishedDate: 'Open Library',
+        description: openLibraryInfo.description ? 'Open Library' : '(none)'
+    };
+    try {
+        const googleMatch = await fetchGoogleMatchByTitle(openLibraryInfo.title, openLibraryInfo.authors);
+        if (googleMatch) {
+            const ids = (googleMatch.industryIdentifiers || []).map(x => x.identifier).join(', ') || 'no ISBN';
+            const googleSource = `Google keyword search ("${googleMatch.title}", ${ids})`;
+            log(`Google keyword search: matched "${googleMatch.title}${googleMatch.subtitle ? ': ' + googleMatch.subtitle : ''}" (${ids})`);
+            openLibraryInfo.title = googleMatch.title;
+            openLibraryInfo.subtitle = googleMatch.subtitle;
+            sources.title = googleSource;
+            if (!openLibraryInfo.description && googleMatch.description) {
+                openLibraryInfo.description = googleMatch.description;
+                sources.description = googleSource;
+            }
+        } else {
+            log('Google keyword search: no matching result, keeping Open Library title');
+        }
+    } catch (error) {
+        log('Google keyword search: request failed, keeping Open Library title', error);
+    }
+    logSources(isbn, openLibraryInfo, sources);
+    return openLibraryInfo;
+}
+
+function logSources(isbn, info, sources) {
+    const fullTitle = `${info.title || ''}${info.subtitle ? ': ' + info.subtitle : ''}`;
+    console.info(`[Book lookup] ${isbn}: sources`);
+    console.table({
+        title: { value: fullTitle, source: sources.all || sources.title },
+        author: { value: (info.authors || []).join(', '), source: sources.all || sources.authors },
+        year: { value: info.publishedDate || '', source: sources.all || sources.publishedDate },
+        description: { value: (info.description || '').slice(0, 60), source: sources.all || sources.description }
+    });
 }
 
 function normalizeForMatch(text) {
@@ -76,10 +114,11 @@ function normalizeForMatch(text) {
 }
 
 // Google's plain (non-field-restricted) search still works, so search by
-// title + author and borrow the description from a result whose title and
-// author surname both match. It may be a different edition, but the
-// description is the same book's, and summaries/study guides get filtered out.
-async function fetchGoogleDescriptionByTitle(title, authors) {
+// title + author and use a result whose title and author surname both match
+// for the title, subtitle and description. It may be a different edition, but
+// it's the same book, and summaries/study guides get filtered out. Results
+// with a description are preferred.
+async function fetchGoogleMatchByTitle(title, authors) {
     const author = (authors || [])[0];
     if (!title || !author) return undefined;
     const surname = normalizeForMatch(author).split(' ').pop();
@@ -87,20 +126,21 @@ async function fetchGoogleDescriptionByTitle(title, authors) {
     const { response, data } = await fetchWithRetry(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=10&key=${apikey}`);
     if (!response.ok) return undefined;
     const wantedTitle = normalizeForMatch(title);
-    const match = (data?.items || []).map(i => i.volumeInfo).find(v =>
-        v.description
+    const specialEdition = /edition|illustrated|deluxe|slipcase|box(ed)? set|large print|abridged|collector|anniversary|annotated/i;
+    const matches = (data?.items || []).map(i => i.volumeInfo).filter(v =>
+        v.title
         && normalizeForMatch(v.title) === wantedTitle
+        && !specialEdition.test(`${v.title} ${v.subtitle || ''}`)
         && (v.authors || []).some(a => normalizeForMatch(a).split(' ').includes(surname))
     );
-    if (match) console.warn(`Description borrowed from Google Books: "${match.title}" (${(match.industryIdentifiers || []).map(x => x.identifier).join(', ')})`);
-    return match?.description;
+    return matches.find(v => v.description) || matches[0];
 }
 
 async function fetchOpenLibraryBookByIsbn(isbn) {
     const key = `ISBN:${isbn}`;
     const { response, data } = await fetchWithRetry(`https://openlibrary.org/api/books?bibkeys=${key}&format=json&jscmd=data`);
     const book = response.ok ? data?.[key] : null;
-    if (!book) { console.error('Open Library response:', data); return null; }
+    if (!book) return null;
     return {
         title: book.title,
         subtitle: book.subtitle,
