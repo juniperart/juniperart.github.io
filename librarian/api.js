@@ -81,8 +81,9 @@ async function fetchGoogleBookByIsbn(isbn) {
             const ids = (googleMatch.industryIdentifiers || []).map(x => x.identifier).join(', ') || 'no ISBN';
             const googleSource = `Google keyword search ("${googleMatch.title}", ${ids})`;
             log(`Google keyword search: matched "${googleMatch.title}${googleMatch.subtitle ? ': ' + googleMatch.subtitle : ''}" (${ids})`);
+            // Keep Open Library's subtitle: the match may be another edition,
+            // and its subtitle can be packaging ("Rejacketed") or an adaptation.
             openLibraryInfo.title = googleMatch.title;
-            openLibraryInfo.subtitle = googleMatch.subtitle;
             sources.title = googleSource;
             if (!openLibraryInfo.description && googleMatch.description) {
                 openLibraryInfo.description = googleMatch.description;
@@ -109,15 +110,20 @@ function logSources(isbn, info, sources) {
     });
 }
 
+// Leading articles are dropped since sources disagree on them
+// ("Kite Runner 20th Anniversary Edition" vs "The Kite Runner 20th ...").
 function normalizeForMatch(text) {
-    return stripTitleNoise(text || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+    return stripTitleNoise(text || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim().replace(/^(the|a|an) /, '');
 }
 
 // Google's plain (non-field-restricted) search still works, so search by
-// title + author and use a result whose title and author surname both match
+// title + author and use a result whose title and first author's surname match
 // for the title, subtitle and description. It may be a different edition, but
-// it's the same book, and summaries/study guides get filtered out. Results
-// with a description are preferred.
+// it's the same book, and summaries/study guides get filtered out. Only
+// English results count - a title search also returns translations, which
+// often keep the English title (e.g. an Indonesian "The Kite Runner").
+// Special editions are skipped unless the book we're looking up is one.
+// Results with a description and no subtitle are preferred.
 async function fetchGoogleMatchByTitle(title, authors) {
     const author = (authors || [])[0];
     if (!title || !author) return undefined;
@@ -127,13 +133,20 @@ async function fetchGoogleMatchByTitle(title, authors) {
     if (!response.ok) return undefined;
     const wantedTitle = normalizeForMatch(title);
     const specialEdition = /edition|illustrated|deluxe|slipcase|box(ed)? set|large print|abridged|collector|anniversary|annotated/i;
+    const wantSpecialEdition = specialEdition.test(title);
     const matches = (data?.items || []).map(i => i.volumeInfo).filter(v =>
         v.title
+        && v.language === 'en'
         && normalizeForMatch(v.title) === wantedTitle
-        && !specialEdition.test(`${v.title} ${v.subtitle || ''}`)
-        && (v.authors || []).some(a => normalizeForMatch(a).split(' ').includes(surname))
+        && (wantSpecialEdition || !specialEdition.test(`${v.title} ${v.subtitle || ''}`))
+        && normalizeForMatch((v.authors || [])[0]).split(' ').includes(surname)
     );
-    return matches.find(v => v.description) || matches[0];
+    // Subtitled records are often adaptations or reissues ("Graphic Novel",
+    // "Rejacketed") and their subtitle gets copied onto the title, so prefer
+    // one without a subtitle.
+    return matches.find(v => v.description && !v.subtitle)
+        || matches.find(v => v.description)
+        || matches[0];
 }
 
 async function fetchOpenLibraryBookByIsbn(isbn) {
