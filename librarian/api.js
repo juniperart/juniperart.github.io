@@ -59,9 +59,41 @@ async function fetchGoogleBookByIsbn(isbn) {
     const openLibraryInfo = await fetchOpenLibraryBookByIsbn(isbn);
     if (openLibraryInfo) {
         console.warn('Google Books had no match for this ISBN, so the info came from Open Library instead.');
+        if (!openLibraryInfo.description) {
+            try {
+                openLibraryInfo.description = await fetchGoogleDescriptionByTitle(openLibraryInfo.title, openLibraryInfo.authors);
+            } catch (error) {
+                console.warn('Google Books description lookup failed:', error);
+            }
+        }
         return openLibraryInfo;
     }
     throw new Error(googleError ? `${googleError}\n\nOpen Library also had no match.` : 'No data returned for ISBN (checked Google Books and Open Library)');
+}
+
+function normalizeForMatch(text) {
+    return stripTitleNoise(text || '').toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+}
+
+// Google's plain (non-field-restricted) search still works, so search by
+// title + author and borrow the description from a result whose title and
+// author surname both match. It may be a different edition, but the
+// description is the same book's, and summaries/study guides get filtered out.
+async function fetchGoogleDescriptionByTitle(title, authors) {
+    const author = (authors || [])[0];
+    if (!title || !author) return undefined;
+    const surname = normalizeForMatch(author).split(' ').pop();
+    const query = encodeURIComponent(`${title} ${author}`);
+    const { response, data } = await fetchWithRetry(`https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=10&key=${apikey}`);
+    if (!response.ok) return undefined;
+    const wantedTitle = normalizeForMatch(title);
+    const match = (data?.items || []).map(i => i.volumeInfo).find(v =>
+        v.description
+        && normalizeForMatch(v.title) === wantedTitle
+        && (v.authors || []).some(a => normalizeForMatch(a).split(' ').includes(surname))
+    );
+    if (match) console.warn(`Description borrowed from Google Books: "${match.title}" (${(match.industryIdentifiers || []).map(x => x.identifier).join(', ')})`);
+    return match?.description;
 }
 
 async function fetchOpenLibraryBookByIsbn(isbn) {
