@@ -84,7 +84,19 @@ async function fetchGoogleBookByIsbn(isbn) {
             // Keep Open Library's subtitle: the match may be another edition,
             // and its subtitle can be packaging ("Rejacketed") or an adaptation.
             openLibraryInfo.title = googleMatch.title;
+            // Google sometimes folds the subtitle into the title.
+            const squash = text => (text || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (openLibraryInfo.subtitle && squash(googleMatch.title).endsWith(squash(openLibraryInfo.subtitle))) {
+                openLibraryInfo.subtitle = undefined;
+            }
             sources.title = googleSource;
+            // Open Library tends to give full legal names; Google, the cover name.
+            const surnameOf = name => normalizeForMatch(name).split(' ').pop();
+            const googleAuthor = (googleMatch.authors || [])[0];
+            if (googleAuthor && openLibraryInfo.authors[0] && surnameOf(googleAuthor) === surnameOf(openLibraryInfo.authors[0])) {
+                openLibraryInfo.authors[0] = googleAuthor;
+                sources.authors = googleSource;
+            }
             if (!openLibraryInfo.description && googleMatch.description) {
                 openLibraryInfo.description = googleMatch.description;
                 sources.description = googleSource;

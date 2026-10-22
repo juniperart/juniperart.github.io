@@ -74,6 +74,21 @@ function watchEntryMatchesTokens(entry, queryTokens) {
     return significant.every(qt => nameTokens.some(nt => nt.startsWith(qt)));
 }
 
+// Scans match on surname only, like Librarian: API names often carry middle
+// names the inventory lacks, and the client prefers false positives to misses.
+const NAME_SUFFIXES = new Set(['jr', 'sr', 'ii', 'iii', 'iv', 'phd', 'md']);
+
+function scannedNameKey(scannedAuthor) {
+    const tokens = normalize(scannedAuthor).split(/\s+/).filter(t => t);
+    while (tokens.length > 1 && NAME_SUFFIXES.has(tokens[tokens.length - 1])) tokens.pop();
+    return ' ' + tokens.join(' '); // leading space so endsWith matches whole words
+}
+
+function surnameMatches(surname, scannedKey) {
+    const key = normalize(surname).split(/\s+/).filter(t => t).join(' ');
+    return key !== '' && scannedKey.endsWith(' ' + key);
+}
+
 function renderResults(query, title) {
     if (!query) {
         inventoryEl.innerHTML = '';
@@ -83,9 +98,12 @@ function renderResults(query, title) {
     }
 
     const queryTokens = getQueryTokens(query);
+    const scannedKey = title ? scannedNameKey(query) : null;
 
     const inventoryMatches = books
-        .filter(b => authorMatchesTokens(b.author, queryTokens))
+        .filter(b => scannedKey
+            ? surnameMatches(b.author.split(/\band\b|&/)[0].split(',')[0], scannedKey)
+            : authorMatchesTokens(b.author, queryTokens))
         .filter(b => !title || titleMatchesQuery(b.title, title))
         .sort((a, b) => a.author.localeCompare(b.author));
 
@@ -107,7 +125,9 @@ function renderResults(query, title) {
     `).join('');
 
     const watchMatches = watchList
-        .filter(w => watchEntryMatchesTokens(w, queryTokens))
+        .filter(w => scannedKey
+            ? surnameMatches(w.lastName, scannedKey)
+            : watchEntryMatchesTokens(w, queryTokens))
         .sort((a, b) => a.lastName.localeCompare(b.lastName));
     snoopyEl.classList.toggle('visible', watchMatches.length > 0);
     watchEl.innerHTML = watchMatches.map(w => `
